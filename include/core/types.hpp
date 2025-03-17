@@ -11,8 +11,10 @@ struct ModelLoadOpt
     std::string modelPath;
     ModelType modelType;
     unsigned short deviceId = 0;
-    int input_width = 0;
-    int input_height = 0;
+    size_t batch = 1;
+    size_t inputWidth = 0;
+    size_t inputHeight = 0;
+    size_t OutputSize = 0;
 };
 
 struct Image

@@ -20,3 +20,7 @@
     ├── detection_demo.cpp
     └── classification_demo.cpp
 ```
+
+# TODO
+1. make a utils directory by sperating function of reading file in `Initialize()`
+2. seperate logger

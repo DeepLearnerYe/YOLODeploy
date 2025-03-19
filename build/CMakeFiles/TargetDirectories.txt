@@ -1,3 +1,0 @@
-/root/YOLODeploy/build/CMakeFiles/modelprocessor.dir
-/root/YOLODeploy/build/CMakeFiles/edit_cache.dir
-/root/YOLODeploy/build/CMakeFiles/rebuild_cache.dir

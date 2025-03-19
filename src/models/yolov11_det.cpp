@@ -6,16 +6,17 @@
 YOLOV11Det::YOLOV11Det(std::unique_ptr<IInferBackend> backend, const std::string &labelPath, float confThreshold, float nmsThresold)
 :BaseModel(std::move(backend)), xFactor_(0), yFactor_(0), confThreshold_(confThreshold), nmsThreshold_(nmsThresold)
 {
-    std::ifstream file(labelPath);
-    if(!file.is_open())
-    {
-        throw std::runtime_error("Failed to open label file: " + labelPath);
-    }
-    std::string line;
-    while(std::getline(file, line))
-    {
-        labels_.push_back(line);
-    }
+    // std::ifstream file(labelPath);
+    // if(!file.is_open())
+    // {
+    //     throw std::runtime_error("Failed to open label file: " + labelPath);
+    // }
+    // std::string line;
+    // while(std::getline(file, line))
+    // {
+    //     labels_.push_back(line);
+    // }
+    labels_ = backend_.get()->GetLabels();
 }
 
 std::tuple<std::unique_ptr<float[]>, size_t> YOLOV11Det::PreProcess(const Image& img)

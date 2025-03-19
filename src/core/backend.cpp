@@ -5,3 +5,8 @@ IInferBackend::IInferBackend(const ModelLoadOpt& modelLoadOpt)
 {
 
 }
+
+std::vector<std::string> &IInferBackend::GetLabels()
+{
+    return labels_;
+}

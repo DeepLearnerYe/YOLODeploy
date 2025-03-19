@@ -17,6 +17,7 @@ include_directories(
     ${TrtPath}/include/
     ${CudaPath}/targets/x86_64-linux/include/
     ${OpenCV_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/
     ${CMAKE_CURRENT_SOURCE_DIR}/include/core
     ${CMAKE_CURRENT_SOURCE_DIR}/include/backends
     ${CMAKE_CURRENT_SOURCE_DIR}/include/models

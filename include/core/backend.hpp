@@ -15,11 +15,13 @@ public:
     virtual int Infer() = 0;
     virtual const std::vector<float>& GetOutput() = 0;
     virtual Shape GetOutputShape() = 0;
+    std::vector<std::string> &GetLabels();
 protected:
     ModelLoadOpt modelLoadOpt_;
     std::mutex mutex_;
     float* hostBuffer_;
     void* deviceBuffers_[2];
     std::vector<float> output_;
+    std::vector<std::string> labels_;
 };
 #endif

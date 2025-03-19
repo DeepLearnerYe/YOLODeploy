@@ -63,7 +63,7 @@ CMAKE_BINARY_DIR = /root/YOLODeploy/build
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/yolov11_singlePicture.dir/all
+all: CMakeFiles/modelprocessor.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -71,34 +71,34 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/yolov11_singlePicture.dir/clean
+clean: CMakeFiles/modelprocessor.dir/clean
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/yolov11_singlePicture.dir
+# Target rules for target CMakeFiles/modelprocessor.dir
 
 # All Build rule for target.
-CMakeFiles/yolov11_singlePicture.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/yolov11_singlePicture.dir/build.make CMakeFiles/yolov11_singlePicture.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/yolov11_singlePicture.dir/build.make CMakeFiles/yolov11_singlePicture.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/root/YOLODeploy/build/CMakeFiles --progress-num=1,2,3,4,5 "Built target yolov11_singlePicture"
-.PHONY : CMakeFiles/yolov11_singlePicture.dir/all
+CMakeFiles/modelprocessor.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/modelprocessor.dir/build.make CMakeFiles/modelprocessor.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/modelprocessor.dir/build.make CMakeFiles/modelprocessor.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/root/YOLODeploy/build/CMakeFiles --progress-num=1,2,3,4,5,6 "Built target modelprocessor"
+.PHONY : CMakeFiles/modelprocessor.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/yolov11_singlePicture.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /root/YOLODeploy/build/CMakeFiles 5
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/yolov11_singlePicture.dir/all
+CMakeFiles/modelprocessor.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /root/YOLODeploy/build/CMakeFiles 6
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/modelprocessor.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /root/YOLODeploy/build/CMakeFiles 0
-.PHONY : CMakeFiles/yolov11_singlePicture.dir/rule
+.PHONY : CMakeFiles/modelprocessor.dir/rule
 
 # Convenience name for target.
-yolov11_singlePicture: CMakeFiles/yolov11_singlePicture.dir/rule
-.PHONY : yolov11_singlePicture
+modelprocessor: CMakeFiles/modelprocessor.dir/rule
+.PHONY : modelprocessor
 
 # clean rule for target.
-CMakeFiles/yolov11_singlePicture.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/yolov11_singlePicture.dir/build.make CMakeFiles/yolov11_singlePicture.dir/clean
-.PHONY : CMakeFiles/yolov11_singlePicture.dir/clean
+CMakeFiles/modelprocessor.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/modelprocessor.dir/build.make CMakeFiles/modelprocessor.dir/clean
+.PHONY : CMakeFiles/modelprocessor.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

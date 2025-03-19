@@ -117,48 +117,48 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named yolov11_singlePicture
+# Target rules for targets named modelprocessor
 
 # Build rule for target.
-yolov11_singlePicture: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 yolov11_singlePicture
-.PHONY : yolov11_singlePicture
+modelprocessor: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 modelprocessor
+.PHONY : modelprocessor
 
 # fast build rule for target.
-yolov11_singlePicture/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/yolov11_singlePicture.dir/build.make CMakeFiles/yolov11_singlePicture.dir/build
-.PHONY : yolov11_singlePicture/fast
+modelprocessor/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/modelprocessor.dir/build.make CMakeFiles/modelprocessor.dir/build
+.PHONY : modelprocessor/fast
 
-examples/yolov11_singlePicture.o: examples/yolov11_singlePicture.cpp.o
-.PHONY : examples/yolov11_singlePicture.o
+java/com_jiayang_so_ModelProcessor.o: java/com_jiayang_so_ModelProcessor.cpp.o
+.PHONY : java/com_jiayang_so_ModelProcessor.o
 
 # target to build an object file
-examples/yolov11_singlePicture.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/yolov11_singlePicture.dir/build.make CMakeFiles/yolov11_singlePicture.dir/examples/yolov11_singlePicture.cpp.o
-.PHONY : examples/yolov11_singlePicture.cpp.o
+java/com_jiayang_so_ModelProcessor.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/modelprocessor.dir/build.make CMakeFiles/modelprocessor.dir/java/com_jiayang_so_ModelProcessor.cpp.o
+.PHONY : java/com_jiayang_so_ModelProcessor.cpp.o
 
-examples/yolov11_singlePicture.i: examples/yolov11_singlePicture.cpp.i
-.PHONY : examples/yolov11_singlePicture.i
+java/com_jiayang_so_ModelProcessor.i: java/com_jiayang_so_ModelProcessor.cpp.i
+.PHONY : java/com_jiayang_so_ModelProcessor.i
 
 # target to preprocess a source file
-examples/yolov11_singlePicture.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/yolov11_singlePicture.dir/build.make CMakeFiles/yolov11_singlePicture.dir/examples/yolov11_singlePicture.cpp.i
-.PHONY : examples/yolov11_singlePicture.cpp.i
+java/com_jiayang_so_ModelProcessor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/modelprocessor.dir/build.make CMakeFiles/modelprocessor.dir/java/com_jiayang_so_ModelProcessor.cpp.i
+.PHONY : java/com_jiayang_so_ModelProcessor.cpp.i
 
-examples/yolov11_singlePicture.s: examples/yolov11_singlePicture.cpp.s
-.PHONY : examples/yolov11_singlePicture.s
+java/com_jiayang_so_ModelProcessor.s: java/com_jiayang_so_ModelProcessor.cpp.s
+.PHONY : java/com_jiayang_so_ModelProcessor.s
 
 # target to generate assembly for a file
-examples/yolov11_singlePicture.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/yolov11_singlePicture.dir/build.make CMakeFiles/yolov11_singlePicture.dir/examples/yolov11_singlePicture.cpp.s
-.PHONY : examples/yolov11_singlePicture.cpp.s
+java/com_jiayang_so_ModelProcessor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/modelprocessor.dir/build.make CMakeFiles/modelprocessor.dir/java/com_jiayang_so_ModelProcessor.cpp.s
+.PHONY : java/com_jiayang_so_ModelProcessor.cpp.s
 
 src/backends/tensorrt_backend.o: src/backends/tensorrt_backend.cpp.o
 .PHONY : src/backends/tensorrt_backend.o
 
 # target to build an object file
 src/backends/tensorrt_backend.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/yolov11_singlePicture.dir/build.make CMakeFiles/yolov11_singlePicture.dir/src/backends/tensorrt_backend.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/modelprocessor.dir/build.make CMakeFiles/modelprocessor.dir/src/backends/tensorrt_backend.cpp.o
 .PHONY : src/backends/tensorrt_backend.cpp.o
 
 src/backends/tensorrt_backend.i: src/backends/tensorrt_backend.cpp.i
@@ -166,7 +166,7 @@ src/backends/tensorrt_backend.i: src/backends/tensorrt_backend.cpp.i
 
 # target to preprocess a source file
 src/backends/tensorrt_backend.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/yolov11_singlePicture.dir/build.make CMakeFiles/yolov11_singlePicture.dir/src/backends/tensorrt_backend.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/modelprocessor.dir/build.make CMakeFiles/modelprocessor.dir/src/backends/tensorrt_backend.cpp.i
 .PHONY : src/backends/tensorrt_backend.cpp.i
 
 src/backends/tensorrt_backend.s: src/backends/tensorrt_backend.cpp.s
@@ -174,7 +174,7 @@ src/backends/tensorrt_backend.s: src/backends/tensorrt_backend.cpp.s
 
 # target to generate assembly for a file
 src/backends/tensorrt_backend.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/yolov11_singlePicture.dir/build.make CMakeFiles/yolov11_singlePicture.dir/src/backends/tensorrt_backend.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/modelprocessor.dir/build.make CMakeFiles/modelprocessor.dir/src/backends/tensorrt_backend.cpp.s
 .PHONY : src/backends/tensorrt_backend.cpp.s
 
 src/core/backend.o: src/core/backend.cpp.o
@@ -182,7 +182,7 @@ src/core/backend.o: src/core/backend.cpp.o
 
 # target to build an object file
 src/core/backend.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/yolov11_singlePicture.dir/build.make CMakeFiles/yolov11_singlePicture.dir/src/core/backend.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/modelprocessor.dir/build.make CMakeFiles/modelprocessor.dir/src/core/backend.cpp.o
 .PHONY : src/core/backend.cpp.o
 
 src/core/backend.i: src/core/backend.cpp.i
@@ -190,7 +190,7 @@ src/core/backend.i: src/core/backend.cpp.i
 
 # target to preprocess a source file
 src/core/backend.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/yolov11_singlePicture.dir/build.make CMakeFiles/yolov11_singlePicture.dir/src/core/backend.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/modelprocessor.dir/build.make CMakeFiles/modelprocessor.dir/src/core/backend.cpp.i
 .PHONY : src/core/backend.cpp.i
 
 src/core/backend.s: src/core/backend.cpp.s
@@ -198,7 +198,7 @@ src/core/backend.s: src/core/backend.cpp.s
 
 # target to generate assembly for a file
 src/core/backend.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/yolov11_singlePicture.dir/build.make CMakeFiles/yolov11_singlePicture.dir/src/core/backend.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/modelprocessor.dir/build.make CMakeFiles/modelprocessor.dir/src/core/backend.cpp.s
 .PHONY : src/core/backend.cpp.s
 
 src/models/yolov11_det.o: src/models/yolov11_det.cpp.o
@@ -206,7 +206,7 @@ src/models/yolov11_det.o: src/models/yolov11_det.cpp.o
 
 # target to build an object file
 src/models/yolov11_det.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/yolov11_singlePicture.dir/build.make CMakeFiles/yolov11_singlePicture.dir/src/models/yolov11_det.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/modelprocessor.dir/build.make CMakeFiles/modelprocessor.dir/src/models/yolov11_det.cpp.o
 .PHONY : src/models/yolov11_det.cpp.o
 
 src/models/yolov11_det.i: src/models/yolov11_det.cpp.i
@@ -214,7 +214,7 @@ src/models/yolov11_det.i: src/models/yolov11_det.cpp.i
 
 # target to preprocess a source file
 src/models/yolov11_det.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/yolov11_singlePicture.dir/build.make CMakeFiles/yolov11_singlePicture.dir/src/models/yolov11_det.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/modelprocessor.dir/build.make CMakeFiles/modelprocessor.dir/src/models/yolov11_det.cpp.i
 .PHONY : src/models/yolov11_det.cpp.i
 
 src/models/yolov11_det.s: src/models/yolov11_det.cpp.s
@@ -222,8 +222,32 @@ src/models/yolov11_det.s: src/models/yolov11_det.cpp.s
 
 # target to generate assembly for a file
 src/models/yolov11_det.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/yolov11_singlePicture.dir/build.make CMakeFiles/yolov11_singlePicture.dir/src/models/yolov11_det.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/modelprocessor.dir/build.make CMakeFiles/modelprocessor.dir/src/models/yolov11_det.cpp.s
 .PHONY : src/models/yolov11_det.cpp.s
+
+src/utils.o: src/utils.cpp.o
+.PHONY : src/utils.o
+
+# target to build an object file
+src/utils.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/modelprocessor.dir/build.make CMakeFiles/modelprocessor.dir/src/utils.cpp.o
+.PHONY : src/utils.cpp.o
+
+src/utils.i: src/utils.cpp.i
+.PHONY : src/utils.i
+
+# target to preprocess a source file
+src/utils.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/modelprocessor.dir/build.make CMakeFiles/modelprocessor.dir/src/utils.cpp.i
+.PHONY : src/utils.cpp.i
+
+src/utils.s: src/utils.cpp.s
+.PHONY : src/utils.s
+
+# target to generate assembly for a file
+src/utils.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/modelprocessor.dir/build.make CMakeFiles/modelprocessor.dir/src/utils.cpp.s
+.PHONY : src/utils.cpp.s
 
 # Help Target
 help:
@@ -233,10 +257,10 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... yolov11_singlePicture"
-	@echo "... examples/yolov11_singlePicture.o"
-	@echo "... examples/yolov11_singlePicture.i"
-	@echo "... examples/yolov11_singlePicture.s"
+	@echo "... modelprocessor"
+	@echo "... java/com_jiayang_so_ModelProcessor.o"
+	@echo "... java/com_jiayang_so_ModelProcessor.i"
+	@echo "... java/com_jiayang_so_ModelProcessor.s"
 	@echo "... src/backends/tensorrt_backend.o"
 	@echo "... src/backends/tensorrt_backend.i"
 	@echo "... src/backends/tensorrt_backend.s"
@@ -246,6 +270,9 @@ help:
 	@echo "... src/models/yolov11_det.o"
 	@echo "... src/models/yolov11_det.i"
 	@echo "... src/models/yolov11_det.s"
+	@echo "... src/utils.o"
+	@echo "... src/utils.i"
+	@echo "... src/utils.s"
 .PHONY : help
 
 

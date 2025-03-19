@@ -90,24 +90,13 @@ int TensorRTBackend::Initialize()
     cudaSetDevice(modelLoadOpt_.deviceId);
     runtime_ = nvinfer1::createInferRuntime(gLogger);
     assert(runtime_ != nullptr);
-    // std::ifstream file(modelLoadOpt_.modelPath, std::ios::binary);
-    // if (!file.good())
-    // {
-    //     std::cerr << "read " << modelLoadOpt_.modelPath << " error!" << std::endl;
-    //     return -1;
-    // }
-    // size_t size = 0;
-    // file.seekg(0, file.end);
-    // size = file.tellg();
-    // file.seekg(0, file.beg);
+
+    // read model data from "so"
     unsigned char* modelPtr = nullptr;
     unsigned int modelLen;
     OpenLibrary(modelLoadOpt_.modelPath, modelPtr, modelLen, labels_);
     unsigned char *serialized_engine = new u_char[modelLen];
     std::memcpy(serialized_engine, modelPtr, modelLen);
-    // assert(serialized_engine);
-    // file.read(serialized_engine, size);
-    // file.close();
 
     engine_ = runtime_->deserializeCudaEngine(serialized_engine, modelLen);
     assert(engine_);

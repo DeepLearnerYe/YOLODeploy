@@ -2,38 +2,27 @@
 #include <opencv2/opencv.hpp>
 #include "yolov11_det.hpp"
 #include "tensorrt_backend.hpp"
-
-
-// void singlePicture(std::string imagePath)
-// {
-//     ModelLoadOpt opt;
-//     opt.modelPath = "/root/host_map/yolov11/ryxw.engine";
-//     opt.modelType = ModelType::ENGINE;
-//     std::string label = "/root/host_map/yolov11/ryxw.names";
-    
-//     std::unique_ptr<TensorRTBackend> backend(new TensorRTBackend(opt));
-//     YOLOV11Det det(std::move(backend), label);
-
-//     cv::Mat mat = cv::imread(imagePath);
-//     Image image;
-//     image.data = mat.data;
-//     image.width = mat.cols;
-//     image.height = mat.rows;
-//     auto result = det.Predict(image);
-//     det.visualizeRsult(image, result);
-// }
+#include "utils.hpp"
 
 void singlePicture(std::string imagePath)
 {
     ModelLoadOpt opt;
     opt.modelPath = "/root/host_map/yolov11/lib_nvidia_ryxw.so.1.1.20250319";
     opt.modelType = ModelType::ENGINE;
-    std::string label = "nothing";
     
     std::unique_ptr<TensorRTBackend> backend(new TensorRTBackend(opt));
-    YOLOV11Det det(std::move(backend), label);
+    YOLOV11Det det(std::move(backend));
 
-    cv::Mat mat = cv::imread(imagePath);
+    std::string base64Image;
+    std::vector<uchar> imageContent;
+    auto ret = ReadFile(imagePath, base64Image);
+    if(ret < 0)
+    {
+        return;
+    }
+    Base64Decode(base64Image, imageContent);
+
+    cv::Mat mat = cv::imdecode(imageContent, cv::IMREAD_COLOR);
     Image image;
     image.data = mat.data;
     image.width = mat.cols;

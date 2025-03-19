@@ -1,4 +1,4 @@
-CMakeFiles/yolov11_singlePicture.dir/src/models/yolov11_det.cpp.o: \
+CMakeFiles/modelprocessor.dir/src/models/yolov11_det.cpp.o: \
  /root/YOLODeploy/src/models/yolov11_det.cpp /usr/include/stdc-predef.h \
  /usr/include/opencv4/opencv2/opencv.hpp \
  /usr/include/opencv4/opencv2/opencv_modules.hpp \

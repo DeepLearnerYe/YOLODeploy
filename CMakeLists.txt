@@ -12,6 +12,7 @@ find_package(OpenCV 4 REQUIRED)
 file(GLOB CORE_SRC "src/core/*.cpp")
 file(GLOB MODEL_SRC "src/models/*.cpp") 
 file(GLOB BACKEND_SRC "src/backends/*.cpp")
+file(GLOB SRC "src/*.cpp")
 
 include_directories(
     ${TrtPath}/include/
@@ -21,6 +22,8 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include/core
     ${CMAKE_CURRENT_SOURCE_DIR}/include/backends
     ${CMAKE_CURRENT_SOURCE_DIR}/include/models
+    /usr/lib/jvm/jdk-17-oracle-x64/include
+    /usr/lib/jvm/jdk-17-oracle-x64/include/linux
 )
 
 link_directories(
@@ -29,13 +32,25 @@ link_directories(
     ${CudaPath}/lib64/
 )
 
-add_executable(yolov11_singlePicture
+# add_executable(yolov11_singlePicture
+#     ${CORE_SRC}
+#     ${MODEL_SRC}
+#     ${BACKEND_SRC}
+#     ${SRC}
+#     examples/yolov11_singlePicture.cpp)
+
+add_library(modelprocessor SHARED
     ${CORE_SRC}
     ${MODEL_SRC}
     ${BACKEND_SRC}
-    examples/yolov11_singlePicture.cpp)
+    ${SRC}
+    # java/ModelProcessor.cpp
+    java/com_jiayang_so_ModelProcessor.cpp
+)
+set(LIBRARY_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/java)
+set_target_properties(modelprocessor PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${LIBRARY_PATH})
     
-target_link_libraries(yolov11_singlePicture
+target_link_libraries(modelprocessor
     nvinfer
     cudart
     ${OpenCV_LIBRARIES}

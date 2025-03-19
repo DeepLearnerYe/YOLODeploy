@@ -14,11 +14,14 @@ public:
     int SetInput(void* data, size_t size) override;
     int Infer() override;
     const std::vector<float>& GetOutput() override;
+    Shape GetOutputShape() override;
 private:
     nvinfer1::IRuntime* runtime_;
     nvinfer1::ICudaEngine* engine_;
     nvinfer1::IExecutionContext* context_;
     cudaStream_t stream_;
+    nvinfer1::Dims inputDims_;
+    nvinfer1::Dims outputDims_;
 };
 
 #endif

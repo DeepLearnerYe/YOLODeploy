@@ -108,10 +108,27 @@ int TensorRTBackend::Initialize()
     assert(context_);
     cudaStreamCreate(&stream_);
 
-    cudaMalloc(&deviceBuffers_[0], modelLoadOpt_.batch * 3 * modelLoadOpt_.inputHeight * modelLoadOpt_.inputWidth * sizeof(float));
-    cudaMalloc(&deviceBuffers_[1], modelLoadOpt_.batch * modelLoadOpt_.OutputSize * sizeof(float));
-    hostBuffer_ = new float[modelLoadOpt_.batch * modelLoadOpt_.OutputSize];
-    output_.reserve(modelLoadOpt_.batch * modelLoadOpt_.OutputSize);
+    auto numTensors = engine_->getNbIOTensors();
+    for(int i = 0; i < numTensors; ++i)
+    {
+        auto tensorName = engine_->getIOTensorName(i);
+        if (nvinfer1::TensorIOMode::kINPUT == engine_->getTensorIOMode(tensorName))
+        {
+            inputDims_ = engine_->getTensorShape(tensorName);
+        }else if(nvinfer1::TensorIOMode::kOUTPUT == engine_->getTensorIOMode(tensorName))
+        {
+            outputDims_ = engine_->getTensorShape(tensorName);
+        }else
+        {
+            std::cout << "get tensor name fail " << std::endl;
+            return -1;
+        }
+    }
+
+    cudaMalloc(&deviceBuffers_[0], modelLoadOpt_.batch * 3 * inputDims_.d[2] * inputDims_.d[3] * sizeof(float));
+    cudaMalloc(&deviceBuffers_[1], modelLoadOpt_.batch * outputDims_.d[1] * outputDims_.d[2] * sizeof(float));
+    hostBuffer_ = new float[modelLoadOpt_.batch * outputDims_.d[1] * outputDims_.d[2]];
+    output_.reserve(modelLoadOpt_.batch * outputDims_.d[1] * outputDims_.d[2]);
 
     delete[] serialized_engine;
     return 0;
@@ -120,8 +137,8 @@ int TensorRTBackend::Initialize()
 int TensorRTBackend::SetInput(void *data, size_t size)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    size_t expectedSize = modelLoadOpt_.batch * 3 * modelLoadOpt_.inputHeight * modelLoadOpt_.inputWidth * sizeof(float);
-    if(size != expectedSize)
+    size_t expectedSize = modelLoadOpt_.batch * 3 * inputDims_.d[2] * inputDims_.d[3] * sizeof(float);
+    if(size * sizeof(float) != expectedSize)
     {
         std::cout << "Invalid input size: expected " << expectedSize << ", got " << size << std::endl;
         return -1;
@@ -141,8 +158,14 @@ int TensorRTBackend::Infer()
 const std::vector<float> &TensorRTBackend::GetOutput()
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    cudaMemcpyAsync(hostBuffer_, deviceBuffers_[1], modelLoadOpt_.batch * modelLoadOpt_.OutputSize * sizeof(float), cudaMemcpyDeviceToHost, stream_);
+    cudaMemcpyAsync(hostBuffer_, deviceBuffers_[1], modelLoadOpt_.batch * outputDims_.d[1] * outputDims_.d[2] * sizeof(float), cudaMemcpyDeviceToHost, stream_);
     cudaStreamSynchronize(stream_);
-    output_.assign(hostBuffer_, hostBuffer_ + modelLoadOpt_.batch * modelLoadOpt_.OutputSize);
+    output_.assign(hostBuffer_, hostBuffer_ + modelLoadOpt_.batch * outputDims_.d[1] * outputDims_.d[2]);
     return output_;
+}
+
+Shape TensorRTBackend::GetOutputShape()
+{
+    Shape output{{outputDims_.d[0], outputDims_.d[1], outputDims_.d[2]}};
+    return output;
 }

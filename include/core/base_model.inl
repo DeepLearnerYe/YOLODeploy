@@ -3,10 +3,13 @@
 
 template <typename ResultType>
 BaseModel<ResultType>::BaseModel(std::unique_ptr<IInferBackend> backend)
-    : backend_(std::move(backend)) {}
+    : backend_(std::move(backend)) 
+{
+        backend_->Initialize();
+}
 
 template <typename ResultType>
-ResultType BaseModel<ResultType>::Predict(const Image &image)
+std::vector<ResultType> BaseModel<ResultType>::Predict(const Image &image)
 {
     auto [input_data, input_size] = PreProcess(image);
 
@@ -16,5 +19,5 @@ ResultType BaseModel<ResultType>::Predict(const Image &image)
 
     auto output = backend_->GetOutput();
 
-    return PostProcess(output, output_size);
+    return PostProcess(output);
 }

@@ -14,6 +14,7 @@ public:
     virtual int SetInput(void* data, size_t size) = 0;
     virtual int Infer() = 0;
     virtual const std::vector<float>& GetOutput() = 0;
+    virtual Shape GetOutputShape() = 0;
 protected:
     ModelLoadOpt modelLoadOpt_;
     std::mutex mutex_;

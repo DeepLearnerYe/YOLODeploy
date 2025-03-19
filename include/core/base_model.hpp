@@ -12,12 +12,12 @@ class BaseModel
 public:
     explicit BaseModel(std::unique_ptr<IInferBackend> backend);
     ~BaseModel() = default;
-    ResultType Predict(const Image& image);
+    std::vector<ResultType> Predict(const Image& image);
 
 protected:
     virtual std::tuple<std::unique_ptr<float[]>, size_t> PreProcess(const Image& img) = 0;
 
-    virtual ResultType PostProcess(void* output, size_t size) = 0;
+    virtual std::vector<ResultType> PostProcess(std::vector<float>& modelOutput) = 0;
 
     std::unique_ptr<IInferBackend> backend_;
 };

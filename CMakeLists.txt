@@ -22,8 +22,8 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include/core
     ${CMAKE_CURRENT_SOURCE_DIR}/include/backends
     ${CMAKE_CURRENT_SOURCE_DIR}/include/models
-    /usr/lib/jvm/jdk-17-oracle-x64/include
-    /usr/lib/jvm/jdk-17-oracle-x64/include/linux
+    /usr/lib/jvm/java-8-openjdk-amd64/include
+    /usr/lib/jvm/java-8-openjdk-amd64/include/linux
 )
 
 link_directories(
@@ -44,7 +44,7 @@ add_library(modelprocessor SHARED
     ${MODEL_SRC}
     ${BACKEND_SRC}
     ${SRC}
-    # java/ModelProcessor.cpp
+    #java/ModelProcessor.cpp
     java/com_jiayang_so_ModelProcessor.cpp
 )
 set(LIBRARY_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/java)
@@ -55,4 +55,5 @@ target_link_libraries(modelprocessor
     cudart
     ${OpenCV_LIBRARIES}
     dl
+    crypto
 )

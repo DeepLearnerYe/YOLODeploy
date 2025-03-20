@@ -1,3 +1,9 @@
+# 环境
+ubuntu: 18.04
+GNU C Library: 2.27
+CUDA: 11.8.0
+TensorRT: 8.6.1.6
+OpenCV: 4.5.4
 # 结构
 ```
 

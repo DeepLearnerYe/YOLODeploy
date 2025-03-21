@@ -17,9 +17,10 @@ public:
 protected:
     virtual std::tuple<std::unique_ptr<float[]>, size_t> PreProcess(const Image& img) = 0;
 
-    virtual std::vector<ResultType> PostProcess(std::vector<float>& modelOutput) = 0;
+    virtual std::vector<ResultType> PostProcess(const Image& img, std::vector<float>& modelOutput) = 0;
 
     std::unique_ptr<IInferBackend> backend_;
+    std::mutex mutex_;
 };
 
 #include "base_model.inl"

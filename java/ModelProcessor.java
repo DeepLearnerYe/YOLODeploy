@@ -59,7 +59,7 @@ public class ModelProcessor {
                 return;
             }
             processor.create(modelPath);
-            byte[] imageData = processor.loadImage("../test2.jpg");
+            byte[] imageData = processor.loadImage("/root/host_map/image/test.jpg");
             // System.out.println("imageData length: " + imageData.length);
             String result = processor.infer(imageData);
             // processor.saveImage(result, "output.jpg");

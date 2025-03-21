@@ -11,13 +11,12 @@ BaseModel<ResultType>::BaseModel(std::unique_ptr<IInferBackend> backend)
 template <typename ResultType>
 std::vector<ResultType> BaseModel<ResultType>::Predict(const Image &image)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     auto [input_data, input_size] = PreProcess(image);
 
     backend_->SetInput(input_data.get(), input_size);
-
     backend_->Infer();
-
     auto output = backend_->GetOutput();
 
-    return PostProcess(output);
+    return PostProcess(image, output);
 }

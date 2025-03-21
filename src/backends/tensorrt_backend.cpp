@@ -45,7 +45,6 @@ TensorRTBackend::TensorRTBackend(const ModelLoadOpt &modelLoadOpt)
 
 TensorRTBackend::~TensorRTBackend()
 {
-    std::lock_guard<std::mutex> lock(mutex_);
     if (stream_)
     {
         cudaStreamSynchronize(stream_);
@@ -132,7 +131,6 @@ int TensorRTBackend::Initialize()
 
 int TensorRTBackend::SetInput(void *data, size_t size)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
     size_t expectedSize = modelLoadOpt_.batch * 3 * inputDims_.d[2] * inputDims_.d[3] * sizeof(float);
     if(size * sizeof(float) != expectedSize)
     {
@@ -145,7 +143,6 @@ int TensorRTBackend::SetInput(void *data, size_t size)
 
 int TensorRTBackend::Infer()
 {
-    std::lock_guard<std::mutex> lock(mutex_);
     auto status = context_->enqueueV2(deviceBuffers_, stream_, nullptr);
     cudaStreamSynchronize(stream_);
     return status;
@@ -153,7 +150,6 @@ int TensorRTBackend::Infer()
 
 const std::vector<float> &TensorRTBackend::GetOutput()
 {
-    std::lock_guard<std::mutex> lock(mutex_);
     cudaMemcpyAsync(hostBuffer_, deviceBuffers_[1], modelLoadOpt_.batch * outputDims_.d[1] * outputDims_.d[2] * sizeof(float), cudaMemcpyDeviceToHost, stream_);
     cudaStreamSynchronize(stream_);
     output_.assign(hostBuffer_, hostBuffer_ + modelLoadOpt_.batch * outputDims_.d[1] * outputDims_.d[2]);

@@ -18,7 +18,6 @@ public:
     std::vector<std::string> &GetLabels();
 protected:
     ModelLoadOpt modelLoadOpt_;
-    std::mutex mutex_;
     float* hostBuffer_;
     void* deviceBuffers_[2];
     std::vector<float> output_;

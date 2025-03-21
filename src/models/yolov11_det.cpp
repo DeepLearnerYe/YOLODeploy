@@ -4,7 +4,7 @@
 
 
 YOLOV11Det::YOLOV11Det(std::unique_ptr<IInferBackend> backend, float confThreshold, float nmsThresold)
-:BaseModel(std::move(backend)), xFactor_(0), yFactor_(0), confThreshold_(confThreshold), nmsThreshold_(nmsThresold)
+:BaseModel(std::move(backend)), confThreshold_(confThreshold), nmsThreshold_(nmsThresold)
 {
     labels_ = backend_.get()->GetLabels();
 }
@@ -12,18 +12,18 @@ YOLOV11Det::YOLOV11Det(std::unique_ptr<IInferBackend> backend, float confThresho
 std::tuple<std::unique_ptr<float[]>, size_t> YOLOV11Det::PreProcess(const Image& img)
 {
     cv::Mat image(img.height, img.width, CV_8UC3, img.data);
+    std::cout << "img.width= " << img.width << "img.height= " << img.height << std::endl;
+    std::cout << "img.cols= " << image.cols << "img.rows= " << image.rows << std::endl;
     int max = std::max(img.height, img.width);
     cv::Mat expandImage = cv::Mat::zeros(cv::Size(max, max), CV_8UC3);
     cv::Rect roi(0, 0, img.width, img.height);
     image.copyTo(expandImage(roi));
-    xFactor_ = image.cols / static_cast<float>(640);
-    yFactor_ = image.cols / static_cast<float>(640);
 
     image_=image.clone();
     cv::imwrite("input.jpg", image);
 
     // HWC->CHW
-    cv::Mat tensor = cv::dnn::blobFromImage(expandImage, 1.0f / 255.f, cv::Size(640, 640), cv::Scalar(), true);
+    cv::Mat tensor = cv::dnn::blobFromImage(expandImage, 1.0f / 255.f, cv::Size(kINPUT_WIDTH, kINPUT_HEIGHT), cv::Scalar(), true);
 
     size_t dataSize = tensor.total();
     std::unique_ptr<float[]> dataPtr(new float[dataSize]);
@@ -32,9 +32,12 @@ std::tuple<std::unique_ptr<float[]>, size_t> YOLOV11Det::PreProcess(const Image&
     return std::make_tuple(std::move(dataPtr), dataSize);
 }
 
-std::vector<DetectResult> YOLOV11Det::PostProcess(std::vector<float>& modelOutput)
+std::vector<DetectResult> YOLOV11Det::PostProcess(const Image &img, std::vector<float>& modelOutput)
 {
     auto outShape = backend_.get()->GetOutputShape();
+    float imageSize = static_cast<float>(std::max(img.width, img.height));
+    float xFactor = imageSize / kINPUT_WIDTH;
+    float yFactor = imageSize / kINPUT_HEIGHT;
 
     cv::Mat detOutput(outShape.dims[1], outShape.dims[2], CV_32F, const_cast<float*>(backend_.get()->GetOutput().data()));
 
@@ -55,10 +58,10 @@ std::vector<DetectResult> YOLOV11Det::PostProcess(std::vector<float>& modelOutpu
             float ow = detOutput.at<float>(2, i);
             float oh = detOutput.at<float>(3, i);
             cv::Rect box;
-            box.x = static_cast<int>(std::max((cx - 0.5 * ow) * xFactor_, 0.0));
-            box.y = static_cast<int>(std::max((cy - 0.5 * oh) * yFactor_, 0.0));
-            box.width = static_cast<int>(ow * xFactor_);
-            box.height = static_cast<int>(oh * yFactor_);
+            box.x = static_cast<int>(std::max((cx - 0.5 * ow) * xFactor, 0.0));
+            box.y = static_cast<int>(std::max((cy - 0.5 * oh) * yFactor, 0.0));
+            box.width = static_cast<int>(ow * xFactor);
+            box.height = static_cast<int>(oh * yFactor);
 
             boxes.push_back(box);
             classIds.push_back(classIdPoint.y);
@@ -101,6 +104,8 @@ void YOLOV11Det::visualizeRsult(const Image& img, std::vector<DetectResult>& res
         box.width = elem.x1 - elem.x0;
         box.height = elem.y1 - elem.y0;
         cv::rectangle(image, box, cv::Scalar(0, 255, 0), 2, 8);
+        std::string text = std::to_string(elem.classId) + ": " + elem.className;
+        cv::putText(image, text, cv::Point(elem.x0, elem.y0 - 20), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(0, 255, 0), 2);
     }
     cv::imwrite("output.jpg", image);
 }

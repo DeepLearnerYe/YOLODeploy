@@ -64,6 +64,11 @@ bool LicenseCheck(std::string key)
 
 // JNI implementations
 JNIEXPORT jboolean JNICALL Java_ModelProcessor_setLicense(JNIEnv *env, jobject, jstring licenseKey){
+    if(isLicensed)
+    {
+        std::cout << "Repeate license authorized " << std::endl;
+        return JNI_FALSE;
+    }
     const char *licenseKeyChars = env->GetStringUTFChars(licenseKey, nullptr);
     std::string licenseKeyStr(licenseKeyChars);
     env->ReleaseStringUTFChars(licenseKey, licenseKeyChars);

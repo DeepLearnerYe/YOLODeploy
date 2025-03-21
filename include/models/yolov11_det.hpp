@@ -2,6 +2,8 @@
 #define YOLOV11_DET_HPP
 #include "base_model.hpp"
 
+const int kINPUT_WIDTH = 640;
+const int kINPUT_HEIGHT = 640;
 struct DetectResult
 {
     int x0 = 0;
@@ -40,11 +42,9 @@ public:
 
 private:
     std::tuple<std::unique_ptr<float[]>, size_t> PreProcess(const Image &img) override;
-    std::vector<DetectResult> PostProcess(std::vector<float> &modelOutput) override;
+    std::vector<DetectResult> PostProcess(const Image &img, std::vector<float> &modelOutput) override;
 
     std::vector<std::string> labels_;
-    float xFactor_;
-    float yFactor_;
     float confThreshold_;
     float nmsThreshold_;
     // 调试使用

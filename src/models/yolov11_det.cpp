@@ -2,6 +2,9 @@
 #include <fstream>
 #include "yolov11_det.hpp"
 
+#include <sys/stat.h>
+#include <sys/types.h>
+
 
 YOLOV11Det::YOLOV11Det(std::unique_ptr<IInferBackend> backend, float confThreshold, float nmsThresold)
 :BaseModel(std::move(backend)), confThreshold_(confThreshold), nmsThreshold_(nmsThresold)
@@ -12,15 +15,24 @@ YOLOV11Det::YOLOV11Det(std::unique_ptr<IInferBackend> backend, float confThresho
 std::tuple<std::unique_ptr<float[]>, size_t> YOLOV11Det::PreProcess(const Image& img)
 {
     cv::Mat image(img.height, img.width, CV_8UC3, img.data);
-    std::cout << "img.width= " << img.width << "img.height= " << img.height << std::endl;
-    std::cout << "img.cols= " << image.cols << "img.rows= " << image.rows << std::endl;
+    // std::cout << "img.width= " << img.width << "img.height= " << img.height << std::endl;
+    // std::cout << "img.cols= " << image.cols << "img.rows= " << image.rows << std::endl;
     int max = std::max(img.height, img.width);
     cv::Mat expandImage = cv::Mat::zeros(cv::Size(max, max), CV_8UC3);
+    expandImage.setTo(cv::Scalar(114, 114, 114));
     cv::Rect roi(0, 0, img.width, img.height);
     image.copyTo(expandImage(roi));
+    // cv::imwrite("resize.jpg", expandImage);
 
-    image_=image.clone();
-    cv::imwrite("input.jpg", image);
+    // image_=image.clone();
+    // std::string folder = "testImg";
+    // struct stat info;
+    // if(stat(folder.c_str(), &info) != 0)
+    // {
+    //     mkdir(folder.c_str(), 0777);
+    // }
+    // std::string inputName = folder + "/input" + std::to_string(count_++) + ".jpg";
+    // cv::imwrite(inputName, image);
 
     // HWC->CHW
     cv::Mat tensor = cv::dnn::blobFromImage(expandImage, 1.0f / 255.f, cv::Size(kINPUT_WIDTH, kINPUT_HEIGHT), cv::Scalar(), true);
@@ -71,8 +83,7 @@ std::vector<DetectResult> YOLOV11Det::PostProcess(const Image &img, std::vector<
 
     std::vector<int> indexes;
     cv::dnn::NMSBoxes(boxes, confidences, confThreshold_, nmsThreshold_, indexes);
-    std::cout << "NMS Selected " << indexes.size() << " out of " << boxes.size() << " boxes." << std::endl;
-
+    // std::cout << "NMS Selected " << indexes.size() << " out of " << boxes.size() << " boxes." << std::endl;
 
     std::vector<DetectResult> results;
     for (int i = 0; i < indexes.size(); ++i)
@@ -107,5 +118,6 @@ void YOLOV11Det::visualizeRsult(const Image& img, std::vector<DetectResult>& res
         std::string text = std::to_string(elem.classId) + ": " + elem.className;
         cv::putText(image, text, cv::Point(elem.x0, elem.y0 - 20), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(0, 255, 0), 2);
     }
-    cv::imwrite("output.jpg", image);
+    // std::string outputName = "testImg/output" + std::to_string(count_) + ".jpg";
+    // cv::imwrite(outputName, image);
 }

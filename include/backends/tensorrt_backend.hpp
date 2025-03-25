@@ -22,6 +22,8 @@ private:
     cudaStream_t stream_;
     nvinfer1::Dims inputDims_;
     nvinfer1::Dims outputDims_;
+    const char* inputTensorName_;
+    const char* outputTensorName_;
 };
 
 #endif

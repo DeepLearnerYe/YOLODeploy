@@ -44,8 +44,8 @@ add_library(modelprocessor SHARED
     ${MODEL_SRC}
     ${BACKEND_SRC}
     ${SRC}
-    java/ModelProcessor.cpp
-    #java/com_jiayang_so_ModelProcessor.cpp
+    # java/ModelProcessor.cpp
+    java/com_jiayang_so_ModelProcessor.cpp
 )
 set(LIBRARY_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/java)
 set_target_properties(modelprocessor PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${LIBRARY_PATH})

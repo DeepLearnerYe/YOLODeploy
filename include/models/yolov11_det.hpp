@@ -13,6 +13,7 @@ struct DetectResult
     int classId = 0;
     float confidence = 0;
     std::string className;
+    float area = 0;
 
     std::string toJson() const
     {
@@ -49,5 +50,6 @@ private:
     float nmsThreshold_;
     // 调试使用
     cv::Mat image_;
+    int count_ = 0;
 };
 #endif

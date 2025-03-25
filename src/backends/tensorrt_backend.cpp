@@ -110,9 +110,13 @@ int TensorRTBackend::Initialize()
         if (nvinfer1::TensorIOMode::kINPUT == engine_->getTensorIOMode(tensorName))
         {
             inputDims_ = engine_->getTensorShape(tensorName);
+            inputTensorName_ = tensorName;
+            
         }else if(nvinfer1::TensorIOMode::kOUTPUT == engine_->getTensorIOMode(tensorName))
         {
             outputDims_ = engine_->getTensorShape(tensorName);
+            outputTensorName_ = tensorName;
+            
         }else
         {
             std::cout << "get tensor name fail " << std::endl;
@@ -124,7 +128,8 @@ int TensorRTBackend::Initialize()
     cudaMalloc(&deviceBuffers_[1], modelLoadOpt_.batch * outputDims_.d[1] * outputDims_.d[2] * sizeof(float));
     hostBuffer_ = new float[modelLoadOpt_.batch * outputDims_.d[1] * outputDims_.d[2]];
     output_.reserve(modelLoadOpt_.batch * outputDims_.d[1] * outputDims_.d[2]);
-
+    context_->setTensorAddress(inputTensorName_, deviceBuffers_[0]);
+    context_->setTensorAddress(outputTensorName_, deviceBuffers_[1]);
     delete[] serialized_engine;
     return 0;
 }
@@ -143,7 +148,8 @@ int TensorRTBackend::SetInput(void *data, size_t size)
 
 int TensorRTBackend::Infer()
 {
-    auto status = context_->enqueueV2(deviceBuffers_, stream_, nullptr);
+    // auto status = context_->enqueueV2(deviceBuffers_, stream_, nullptr);
+    auto status = context_->enqueueV3(stream_);
     cudaStreamSynchronize(stream_);
     return status;
 }

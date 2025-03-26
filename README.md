@@ -1,30 +1,29 @@
 # 环境
-ubuntu: 18.04
-GNU C Library: 2.27
-CUDA: 11.8.0
-TensorRT: 8.6.1.6
-OpenCV: 4.5.4
+ubuntu: 18.04  
+GNU C Library: 2.27  
+CUDA: 11.8.0  
+TensorRT: 8.6.1.6  
+OpenCV: 4.5.4  
 # 结构
 ```
 
-├── include/
-│   ├── core/              // 核心框架接口
-│   │   ├── base_model.hpp // 模型基类
-│   │   ├── backend.hpp    // 后端接口
-│   │   ├── exceptions.hpp
-│   │   └── types.hpp      // 公共数据结构
-│   ├── models/           // 具体模型实现
-│   │   ├── yolov5_det.hpp
-│   │   ├── yolov11_det.hpp
-│   │   ├── yolov11_cls.hpp
-│   ├── backends/         // 推理后端实现
-│   │   ├── atlas_backend.hpp
-│   │   ├── tensorrt_backend.hpp
-├── src/
+├── include/                     # 头文件
+│   ├── core/                    # 核心框架模块
+│   │   ├── base_model.hpp       # 模型抽象基类定义
+│   │   ├── base_model.hpp       # 模板实现文件
+│   │   ├── backend.hpp          # 推理后端抽象接口定义
+│   │   └── types.hpp            # 公共数据类型定义
+│   ├── models/                  # 具体模型
+│   │   ├── yolov11_det.hpp      # YOLOv11检测模型
+│   │   ├── yolov11_cls.hpp      # YOLOv11分类模型
+│   ├── backends/                # 推理后端实现
+│   │   ├── atlas_backend.hpp    # Atlas后端
+│   │   ├── tensorrt_backend.hpp # TensorRT推理后端
+├── src/                         # 源码
+├── java/                        # JNI接口实现目录
+├── examples/                    # 示例代码目录
+    ├── yolov11_singlePicture.cpp 
 
-└── samples/
-    ├── detection_demo.cpp
-    └── classification_demo.cpp
 ```
 
 # 模型转换

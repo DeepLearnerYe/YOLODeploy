@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #models=("ywhy" "dhzy" "gczy" "qzzy")
-models=("scxc")
+models=("ywhy")
 
 total=${#models[@]}
 # utils defination

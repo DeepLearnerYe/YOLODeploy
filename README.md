@@ -27,6 +27,13 @@ OpenCV: 4.5.4
     └── classification_demo.cpp
 ```
 
+# 模型转换
+```
+# 路径是存放模型的路径，需要有模型的.engine和.names文件
+./convert_model.sh <path/to/model>
+```
+转换的模型在脚本文件最开始的`models`指定，支持多个模型一起转换
+
 # TODO
 1. make a utils directory by sperating function of reading file in `Initialize()`
 2. seperate logger

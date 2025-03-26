@@ -21,13 +21,6 @@ struct ModelLoadOpt
     size_t OutputSize = 0;
 };
 
-struct Image
-{
-    void *data;
-    int width = 0;
-    int height = 0;
-};
-
 struct Shape
 {
     std::vector<int32_t> dims;

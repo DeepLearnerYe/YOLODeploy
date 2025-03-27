@@ -1,4 +1,3 @@
-#include <opencv2/opencv.hpp>
 #include <fstream>
 #include <algorithm>
 #include "yolov11_det.hpp"

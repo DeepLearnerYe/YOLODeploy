@@ -2,8 +2,7 @@
 #define YOLOV11_DET_HPP
 #include "base_model.hpp"
 
-const int kINPUT_WIDTH = 640;
-const int kINPUT_HEIGHT = 640;
+
 struct DetectResult
 {
     int x0 = 0;
@@ -50,5 +49,7 @@ private:
     std::vector<std::string> labels_;
     float confThreshold_;
     float nmsThreshold_;
+    static const int kINPUT_WIDTH = 640;
+    static const int kINPUT_HEIGHT = 640;
 };
 #endif

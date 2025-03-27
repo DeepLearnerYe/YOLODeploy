@@ -32,28 +32,35 @@ link_directories(
     ${CudaPath}/lib64/
 )
 
-# add_executable(yolov11_singlePicture
-#     ${CORE_SRC}
-#     ${MODEL_SRC}
-#     ${BACKEND_SRC}
-#     ${SRC}
-#     examples/yolov11_singlePicture.cpp)
-
-add_library(modelprocessor SHARED
+add_executable(yolov11_singlePicture
     ${CORE_SRC}
     ${MODEL_SRC}
     ${BACKEND_SRC}
     ${SRC}
-    java/ModelProcessor.cpp
-    # java/com_jiayang_so_ModelProcessor.cpp
-)
-set(LIBRARY_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/java)
-set_target_properties(modelprocessor PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${LIBRARY_PATH})
-    
-target_link_libraries(modelprocessor
+    examples/yolov11_singlePicture.cpp)
+target_link_libraries(yolov11_singlePicture
     nvinfer
     cudart
     ${OpenCV_LIBRARIES}
     dl
     crypto
 )
+
+# add_library(modelprocessor SHARED
+#     ${CORE_SRC}
+#     ${MODEL_SRC}
+#     ${BACKEND_SRC}
+#     ${SRC}
+#     java/ModelProcessor.cpp
+#     # java/com_jiayang_so_ModelProcessor.cpp
+# )
+# set(LIBRARY_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/java)
+# set_target_properties(modelprocessor PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${LIBRARY_PATH})
+    
+# target_link_libraries(modelprocessor
+#     nvinfer
+#     cudart
+#     ${OpenCV_LIBRARIES}
+#     dl
+#     crypto
+# )

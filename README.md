@@ -1,5 +1,5 @@
 # 环境
-ubuntu: 18.04  
+Ubuntu: 18.04  
 GNU C Library: 2.27  
 CUDA: 11.8.0  
 TensorRT: 8.6.1.6  

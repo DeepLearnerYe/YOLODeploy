@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <tuple>
+#include <opencv2/opencv.hpp>
 #include "backend.hpp"
 #include "types.hpp"
 

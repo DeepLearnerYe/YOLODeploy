@@ -17,26 +17,50 @@ JNIEXPORT jboolean JNICALL Java_ModelProcessor_setLicense
 
 /*
  * Class:     ModelProcessor
- * Method:    createHandler
- * Signature: (Ljava/lang/String;)J
+ * Method:    createDetectionHandler
+ * Signature: (Ljava/lang/String;J)J
  */
-JNIEXPORT jlong JNICALL Java_ModelProcessor_createHandler
+JNIEXPORT jlong JNICALL Java_ModelProcessor_createDetectionHandler
   (JNIEnv *, jobject, jstring, jlong);
 
 /*
  * Class:     ModelProcessor
- * Method:    destroyHandler
+ * Method:    destroyDetectionHandler
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_ModelProcessor_destroyHandler
+JNIEXPORT void JNICALL Java_ModelProcessor_destroyDetectionHandler
   (JNIEnv *, jobject, jlong);
 
 /*
  * Class:     ModelProcessor
- * Method:    infer
+ * Method:    detectionInfer
  * Signature: (J[B)[B
  */
-JNIEXPORT jbyteArray JNICALL Java_ModelProcessor_infer
+JNIEXPORT jbyteArray JNICALL Java_ModelProcessor_detectionInfer
+  (JNIEnv *, jobject, jlong, jbyteArray);
+
+/*
+ * Class:     ModelProcessor
+ * Method:    createClassificationHandler
+ * Signature: (Ljava/lang/String;J)J
+ */
+JNIEXPORT jlong JNICALL Java_ModelProcessor_createClassificationHandler
+  (JNIEnv *, jobject, jstring, jlong);
+
+/*
+ * Class:     ModelProcessor
+ * Method:    destroyClassificationHandler
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_ModelProcessor_destroyClassificationHandler
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     ModelProcessor
+ * Method:    classificationInfer
+ * Signature: (J[B)[B
+ */
+JNIEXPORT jbyteArray JNICALL Java_ModelProcessor_classificationInfer
   (JNIEnv *, jobject, jlong, jbyteArray);
 
 #ifdef __cplusplus

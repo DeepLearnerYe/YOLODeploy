@@ -51,9 +51,11 @@ std::vector<float> YOLOV11Cls::Softmax(std::vector<float> &modelOutput)
 {
     std::vector<float> res;
     float t = 0, sum = 0;
+    // avoid value overflow
+    float max = *std::max_element(modelOutput.begin(), modelOutput.end());
     for (int i = 0; i < modelOutput.size(); ++i)
     {
-        t = expf(modelOutput[i]);
+        t = expf(modelOutput[i] - max);
         res.push_back(t);
         sum += t;
     }
@@ -83,24 +85,12 @@ std::vector<int> YOLOV11Cls::TopK(const std::vector<float> &vec, int k)
 std::vector<CLSResult> YOLOV11Cls::PostProcess(const cv::Mat &img, std::vector<float> &modelOutput)
 {
     auto res = Softmax(modelOutput);
-    auto classNum = backend_->GetOutputShape().dims[1];
-    auto topk_idx = TopK(res, classNum);
-
-    // find the highest confidence
-    std::vector<int> indexs;
-    std::vector<float> confidences;
-    for (auto idx : topk_idx)
-    {
-        indexs.push_back(idx);
-        confidences.push_back(res[idx]);
-    }
-    auto maxIt = std::max_element(confidences.begin(), confidences.end());
-    int maxIdx = std::distance(confidences.begin(), maxIt);
+    auto topk_idx = TopK(res, 1);
 
     CLSResult result;
-    result.classId = indexs[maxIdx];
-    result.confidence = confidences[maxIdx];
-    result.className = labels_[indexs[maxIdx]];
+    result.classId = topk_idx[0];
+    result.confidence = res[topk_idx[0]];
+    result.className = labels_[topk_idx[0]];
 
     return {result};
 }
@@ -112,5 +102,5 @@ void YOLOV11Cls::visualizeRsult(const cv::Mat &image, std::vector<CLSResult> &re
         std::string text = std::to_string(elem.classId) + ": " + elem.className;
         cv::putText(image, text, cv::Point(30, 20), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(0, 255, 0), 2);
     }
-    cv::imwrite("detOutput.jpg", image);
+    cv::imwrite("clsOutput.jpg", image);
 }

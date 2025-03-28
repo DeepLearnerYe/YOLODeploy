@@ -2,7 +2,6 @@
 #define YOLOV11_DET_HPP
 #include "base_model.hpp"
 
-
 struct DetectResult
 {
     int x0 = 0;
@@ -17,20 +16,21 @@ struct DetectResult
     std::string toJson() const
     {
         std::ostringstream oss;
-        return "{\"classVec\":{ \"point\": [" +
-               std::to_string(x0) + "," + std::to_string(y0) + "," +
-               std::to_string(x1) + "," + std::to_string(y0) + "," +
-               std::to_string(x1) + "," + std::to_string(y1) + "," +
-               std::to_string(x0) + "," + std::to_string(y1) + "]" +
-               ", \"area\": " + std::to_string(area) +
-               ", \"classId\": " + std::to_string(classId) +
-               ", \"className\": \"" + className + "\"" +
-               ", \"confidence\": " + std::to_string(confidence) +
-               ", \"x0\": " + std::to_string(x0) +
-               ", \"y0\": " + std::to_string(y0) +
-               ", \"x1\": " + std::to_string(x1) +
-               ", \"y1\": " + std::to_string(y1) +
-               " }}";
+        oss << "{"
+            << "\"classVec\":{ \"point\": ["
+            << x0 << "," << y0 << "," << x1 << "," << y0 << ","
+            << x1 << "," << y1 << "," << x0 << "," << y1 << "],"
+            << "\"area\": " << area << ","
+            << "\"classId\": " << classId << ","
+            << "\"className\": \"" << className << "\","
+            << "\"confidence\": " << confidence << ","
+            << "\"x0\": " << x0 << ","
+            << "\"y0\": " << y0 << ","
+            << "\"x1\": " << x1 << ","
+            << "\"y1\": " << y1
+            << " }}";
+
+        return oss.str();
     }
 };
 

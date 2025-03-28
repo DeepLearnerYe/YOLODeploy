@@ -59,7 +59,7 @@ int main(int argc, char**argv)
         std::cout << "nums of params incorrect " << std::endl;
         return 0;
     }
-    singlePicture(argv[1]);
+    singlePicture2(argv[1]);
 
     return 0;
 }

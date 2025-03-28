@@ -2,12 +2,24 @@
 #define YOLOV11_CLS_HPP
 #include "base_model.hpp"
 
-
 struct CLSResult
 {
     int classId = 0;
     float confidence = 0;
     std::string className;
+
+    std::string toJson() const
+    {
+        std::ostringstream oss;
+        oss << "{"
+            << "\"classVec\":{"
+            << "\"classId\": " << classId << ", "
+            << "\"className\": \"" << className << "\", "
+            << "\"confidence\": " << confidence
+            << "}}";
+
+        return oss.str();
+    }
 };
 
 class YOLOV11Cls : public BaseModel<CLSResult>
@@ -19,9 +31,9 @@ public:
 
 private:
     std::tuple<std::unique_ptr<float[]>, size_t> PreProcess(const cv::Mat &img) override;
-    std::vector<CLSResult> PostProcess(const cv::Mat& img, std::vector<float> &modelOutput) override;
+    std::vector<CLSResult> PostProcess(const cv::Mat &img, std::vector<float> &modelOutput) override;
     std::vector<float> Softmax(std::vector<float> &modelOutput);
-    std::vector<int> TopK(const std::vector<float>& vec, int k);
+    std::vector<int> TopK(const std::vector<float> &vec, int k);
 
     std::vector<std::string> labels_;
     float confThreshold_;

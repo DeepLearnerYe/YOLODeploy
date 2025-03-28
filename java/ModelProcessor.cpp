@@ -5,8 +5,9 @@
 #include <openssl/md5.h>
 #include <exception>
 #include "ModelProcessor.h"
-#include "yolov11_det.hpp"
 #include "tensorrt_backend.hpp"
+#include "yolov11_det.hpp"
+#include "yolov11_cls.hpp"
 
 bool isLicensed = false;
 
@@ -90,7 +91,7 @@ JNIEXPORT jboolean JNICALL Java_ModelProcessor_setLicense(JNIEnv *env, jobject, 
     // std::cout << "isLicensed = "<< isLicensed << std::endl;
 }
 
-JNIEXPORT jlong JNICALL Java_ModelProcessor_createHandler(JNIEnv *env, jobject, jstring modelPath, jlong jgpuNo)
+JNIEXPORT jlong JNICALL Java_ModelProcessor_createDetectionHandler(JNIEnv *env, jobject, jstring modelPath, jlong jgpuNo)
 {
     // std::cout << "createhandler" << std::endl;
     if (!isLicensed)
@@ -109,7 +110,7 @@ JNIEXPORT jlong JNICALL Java_ModelProcessor_createHandler(JNIEnv *env, jobject, 
     return reinterpret_cast<jlong>(model);
 }
 
-JNIEXPORT void JNICALL Java_ModelProcessor_destroyHandler(JNIEnv *env, jobject, jlong handlerPtr)
+JNIEXPORT void JNICALL Java_ModelProcessor_destroyDetectionHandler(JNIEnv *env, jobject, jlong handlerPtr)
 {
     // std::cout << "delete " << std::endl;
     if (!isLicensed || !handlerPtr)
@@ -120,7 +121,7 @@ JNIEXPORT void JNICALL Java_ModelProcessor_destroyHandler(JNIEnv *env, jobject, 
     delete model;
 }
 
-JNIEXPORT jbyteArray JNICALL Java_ModelProcessor_infer(JNIEnv *env, jobject, jlong handlerPtr, jbyteArray imageData)
+JNIEXPORT jbyteArray JNICALL Java_ModelProcessor_detectionInfer(JNIEnv *env, jobject, jlong handlerPtr, jbyteArray imageData)
 {
     std::ostringstream oss;
     // Get the input byte array
@@ -158,6 +159,95 @@ JNIEXPORT jbyteArray JNICALL Java_ModelProcessor_infer(JNIEnv *env, jobject, jlo
         }
 
         oss << "{\"msg\": \"" << message << "\", ";
+        oss << "\"objectVec\": [";
+        for (size_t i = 0; i < objectVec.size(); ++i)
+        {
+            oss << objectVec[i].toJson();
+            if (i != objectVec.size() - 1)
+            {
+                oss << ", ";
+            }
+        }
+        oss << "], \"success\": true";
+        oss << "}";
+    }
+    catch (const std::exception &e)
+    {
+        oss.str("");
+        oss.clear();
+        oss << "{ \"msg\": \"exception occurred\", " << "\"objectVec\": [], \"success\": false }";
+    }
+
+    std::string resultStr = oss.str();
+
+    // Release the input byte array
+    env->ReleaseByteArrayElements(imageData, data, JNI_ABORT);
+
+    // Create a new byte array for the result
+    jbyteArray result = env->NewByteArray(resultStr.size());
+    env->SetByteArrayRegion(result, 0, resultStr.size(), reinterpret_cast<const jbyte *>(resultStr.c_str()));
+
+    return result;
+}
+
+JNIEXPORT jlong JNICALL Java_ModelProcessor_createClassificationHandler(JNIEnv *env, jobject, jstring modelPath, jlong jgpuNo)
+{
+    // std::cout << "createhandler" << std::endl;
+    if (!isLicensed)
+    {
+        return reinterpret_cast<jlong>(nullptr);
+    }
+    const char *modelPathChars = env->GetStringUTFChars(modelPath, nullptr);
+    std::string modelPathStr(modelPathChars);
+    env->ReleaseStringUTFChars(modelPath, modelPathChars);
+    unsigned short gpuNo = static_cast<unsigned short>(jgpuNo);
+    ModelLoadOpt opt;
+    opt.modelPath = modelPathStr;
+    opt.deviceId = gpuNo;
+    std::unique_ptr<TensorRTBackend> backend(new TensorRTBackend(opt));
+    YOLOV11Cls *model = new YOLOV11Cls(std::move(backend));
+    return reinterpret_cast<jlong>(model);
+}
+
+JNIEXPORT void JNICALL Java_ModelProcessor_destroyClassificationHandler(JNIEnv *env, jobject, jlong handlerPtr)
+{
+    // std::cout << "delete " << std::endl;
+    if (!isLicensed || !handlerPtr)
+    {
+        return;
+    }
+    YOLOV11Cls *model = reinterpret_cast<YOLOV11Cls *>(handlerPtr);
+    delete model;
+}
+
+JNIEXPORT jbyteArray JNICALL Java_ModelProcessor_classificationInfer(JNIEnv *env, jobject, jlong handlerPtr, jbyteArray imageData)
+{
+    std::ostringstream oss;
+    // Get the input byte array
+    jsize length = env->GetArrayLength(imageData);
+    jbyte *data = env->GetByteArrayElements(imageData, nullptr);
+    try
+    {
+        if (!isLicensed || !handlerPtr)
+        {
+            return 0;
+        }
+        YOLOV11Cls *model = reinterpret_cast<YOLOV11Cls *>(handlerPtr);
+
+        std::vector<uchar> inputBuffer(data, data + length);
+        cv::Mat mat = cv::imdecode(inputBuffer, cv::IMREAD_COLOR);
+        if (mat.empty())
+        {
+            std::cerr << "Error: Failed to decode the image. empty mat" << std::endl;
+            env->ReleaseByteArrayElements(imageData, data, JNI_ABORT);
+            return 0; // Return null if image decoding fails
+        }
+        
+        auto objectVec = model->Predict(mat);
+        // model->visualizeRsult(mat, objectVec);
+
+        // Convert results to string
+        oss << "{\"msg\": \"classification done\", ";
         oss << "\"objectVec\": [";
         for (size_t i = 0; i < objectVec.size(); ++i)
         {

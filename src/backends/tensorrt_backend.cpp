@@ -1,8 +1,9 @@
 #include <cassert>
 #include <fstream>
 #include <iostream>
+#include <cstring>
+#include "utils.hpp"
 #include "tensorrt_backend.hpp"
-
 
 // ======================= need to optimize
 const char *LogLevelToString[] = {
@@ -37,13 +38,13 @@ class Logger : public nvinfer1::ILogger
 // ======================= need to optimize
 
 TensorRTBackend::TensorRTBackend(const ModelLoadOpt &modelLoadOpt)
-    : IInferBackend(modelLoadOpt), runtime_(nullptr), engine_(nullptr), context_(nullptr), stream_(nullptr)
+    : IInferBackend(modelLoadOpt), runtime_(nullptr), engine_(nullptr), context_(nullptr), stream_(nullptr), outputSize_(1),
+      inputTensorName_(nullptr), outputTensorName_(nullptr)
 {
 }
 
 TensorRTBackend::~TensorRTBackend()
 {
-    std::lock_guard<std::mutex> lock(mutex_);
     if (stream_)
     {
         cudaStreamSynchronize(stream_);
@@ -87,58 +88,64 @@ int TensorRTBackend::Initialize()
     cudaSetDevice(modelLoadOpt_.deviceId);
     runtime_ = nvinfer1::createInferRuntime(gLogger);
     assert(runtime_ != nullptr);
-    std::ifstream file(modelLoadOpt_.modelPath, std::ios::binary);
-    if (!file.good())
-    {
-        std::cerr << "read " << modelLoadOpt_.modelPath << " error!" << std::endl;
-        return -1;
-    }
-    size_t size = 0;
-    file.seekg(0, file.end);
-    size = file.tellg();
-    file.seekg(0, file.beg);
-    char *serialized_engine = new char[size];
-    assert(serialized_engine);
-    file.read(serialized_engine, size);
-    file.close();
 
-    engine_ = runtime_->deserializeCudaEngine(serialized_engine, size);
+    // read model data from "so"
+    unsigned char *modelPtr = nullptr;
+    unsigned int modelLen;
+    OpenLibrary(modelLoadOpt_.modelPath, modelPtr, modelLen, labels_);
+    unsigned char *serialized_engine = new u_char[modelLen];
+    std::memcpy(serialized_engine, modelPtr, modelLen);
+
+    engine_ = runtime_->deserializeCudaEngine(serialized_engine, modelLen);
     assert(engine_);
     context_ = engine_->createExecutionContext();
     assert(context_);
     cudaStreamCreate(&stream_);
 
+    // get the input and output of model
     auto numTensors = engine_->getNbIOTensors();
-    for(int i = 0; i < numTensors; ++i)
+    for (int i = 0; i < numTensors; ++i)
     {
         auto tensorName = engine_->getIOTensorName(i);
         if (nvinfer1::TensorIOMode::kINPUT == engine_->getTensorIOMode(tensorName))
         {
             inputDims_ = engine_->getTensorShape(tensorName);
-        }else if(nvinfer1::TensorIOMode::kOUTPUT == engine_->getTensorIOMode(tensorName))
+            inputTensorName_ = tensorName;
+        }
+        else if (nvinfer1::TensorIOMode::kOUTPUT == engine_->getTensorIOMode(tensorName))
         {
             outputDims_ = engine_->getTensorShape(tensorName);
-        }else
+            outputTensorName_ = tensorName;
+        }
+        else
         {
             std::cout << "get tensor name fail " << std::endl;
             return -1;
         }
     }
+    for(int i = 0; i < outputDims_.nbDims; ++i)
+    {
+        outputSize_ *= outputDims_.d[i];
+    }
 
+    // assign memory
     cudaMalloc(&deviceBuffers_[0], modelLoadOpt_.batch * 3 * inputDims_.d[2] * inputDims_.d[3] * sizeof(float));
-    cudaMalloc(&deviceBuffers_[1], modelLoadOpt_.batch * outputDims_.d[1] * outputDims_.d[2] * sizeof(float));
-    hostBuffer_ = new float[modelLoadOpt_.batch * outputDims_.d[1] * outputDims_.d[2]];
-    output_.reserve(modelLoadOpt_.batch * outputDims_.d[1] * outputDims_.d[2]);
-
+    cudaMalloc(&deviceBuffers_[1], modelLoadOpt_.batch * outputSize_ * sizeof(float));
+    hostBuffer_ = new float[modelLoadOpt_.batch * outputSize_];
+    output_.reserve(modelLoadOpt_.batch * outputSize_);
+    if (inputTensorName_ && outputTensorName_)
+    {
+        context_->setTensorAddress(inputTensorName_, deviceBuffers_[0]);
+        context_->setTensorAddress(outputTensorName_, deviceBuffers_[1]);
+    }
     delete[] serialized_engine;
     return 0;
 }
 
 int TensorRTBackend::SetInput(void *data, size_t size)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
     size_t expectedSize = modelLoadOpt_.batch * 3 * inputDims_.d[2] * inputDims_.d[3] * sizeof(float);
-    if(size * sizeof(float) != expectedSize)
+    if (size * sizeof(float) != expectedSize)
     {
         std::cout << "Invalid input size: expected " << expectedSize << ", got " << size << std::endl;
         return -1;
@@ -149,23 +156,26 @@ int TensorRTBackend::SetInput(void *data, size_t size)
 
 int TensorRTBackend::Infer()
 {
-    std::lock_guard<std::mutex> lock(mutex_);
-    auto status = context_->enqueueV2(deviceBuffers_, stream_, nullptr);
+    // auto status = context_->enqueueV2(deviceBuffers_, stream_, nullptr);
+    auto status = context_->enqueueV3(stream_);
     cudaStreamSynchronize(stream_);
     return status;
 }
 
 const std::vector<float> &TensorRTBackend::GetOutput()
 {
-    std::lock_guard<std::mutex> lock(mutex_);
-    cudaMemcpyAsync(hostBuffer_, deviceBuffers_[1], modelLoadOpt_.batch * outputDims_.d[1] * outputDims_.d[2] * sizeof(float), cudaMemcpyDeviceToHost, stream_);
+    cudaMemcpyAsync(hostBuffer_, deviceBuffers_[1], modelLoadOpt_.batch * outputSize_ * sizeof(float), cudaMemcpyDeviceToHost, stream_);
     cudaStreamSynchronize(stream_);
-    output_.assign(hostBuffer_, hostBuffer_ + modelLoadOpt_.batch * outputDims_.d[1] * outputDims_.d[2]);
+    output_.assign(hostBuffer_, hostBuffer_ + modelLoadOpt_.batch * outputSize_);
     return output_;
 }
 
 Shape TensorRTBackend::GetOutputShape()
 {
-    Shape output{{outputDims_.d[0], outputDims_.d[1], outputDims_.d[2]}};
-    return output;
+    Shape outputShape;
+    for(int i = 0; i < outputDims_.nbDims; ++i)
+    {
+        outputShape.dims.push_back(outputDims_.d[i]);
+    }
+    return outputShape;
 }

@@ -71,6 +71,7 @@ std::vector<DetectResult> YOLOV11Det::PostProcess(const cv::Mat &img, std::vecto
 
     std::vector<int> indexes;
     cv::dnn::NMSBoxes(boxes, confidences, confThreshold_, nmsThreshold_, indexes);
+    std::cout << "selected: " << indexes.size() << " of " << boxes.size() << std::endl;
     
     std::vector<DetectResult> results;
     for (int i = 0; i < indexes.size(); ++i)

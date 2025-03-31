@@ -63,6 +63,30 @@ JNIEXPORT void JNICALL Java_ModelProcessor_destroyClassificationHandler
 JNIEXPORT jbyteArray JNICALL Java_ModelProcessor_classificationInfer
   (JNIEnv *, jobject, jlong, jbyteArray);
 
+/*
+ * Class:     ModelProcessor
+ * Method:    createOrientedBoundingBoxHandler
+ * Signature: (Ljava/lang/String;J)J
+ */
+JNIEXPORT jlong JNICALL Java_ModelProcessor_createOrientedBoundingBoxHandler
+  (JNIEnv *, jobject, jstring, jlong);
+
+/*
+ * Class:     ModelProcessor
+ * Method:    destroyOrientedBoundingBoxHandler
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_ModelProcessor_destroyOrientedBoundingBoxHandler
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     ModelProcessor
+ * Method:    orientedBoundingBoxInfer
+ * Signature: (J[B)[B
+ */
+JNIEXPORT jbyteArray JNICALL Java_ModelProcessor_orientedBoundingBoxInfer
+  (JNIEnv *, jobject, jlong, jbyteArray);
+
 #ifdef __cplusplus
 }
 #endif

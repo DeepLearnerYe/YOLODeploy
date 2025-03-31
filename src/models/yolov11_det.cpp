@@ -2,8 +2,6 @@
 #include <algorithm>
 #include "yolov11_det.hpp"
 
-#include <sys/stat.h>
-#include <sys/types.h>
 
 // ywhy model needs
 static std::vector<std::string> ywhyLabels{"smoke", "fire", "yyxl", "hongqi", "light", "ytwr"};
@@ -71,8 +69,8 @@ std::vector<DetectResult> YOLOV11Det::PostProcess(const cv::Mat &img, std::vecto
 
     std::vector<int> indexes;
     cv::dnn::NMSBoxes(boxes, confidences, confThreshold_, nmsThreshold_, indexes);
-    std::cout << "selected: " << indexes.size() << " of " << boxes.size() << std::endl;
     
+    // transform to the specific format
     std::vector<DetectResult> results;
     for (int i = 0; i < indexes.size(); ++i)
     {

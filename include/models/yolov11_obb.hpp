@@ -4,11 +4,14 @@
 
 struct RotatedRect
 {
-    float x = 0;
-    float y = 0;
-    float w = 0;
-    float h = 0;
-    float angle = 0;
+    float leftTopx = 0;
+    float leftTopy = 0;
+    float rightTopx = 0;
+    float rightTopy = 0;
+    float rightBottomx = 0;
+    float rightBottomy = 0;
+    float leftBottomx = 0;
+    float leftBottomy = 0;
 };
 
 struct ObbResult
@@ -17,6 +20,21 @@ struct ObbResult
     int classId = 0;
     float confidence = 0;
     std::string className;
+
+    std::string toJson() const
+    {
+        std::ostringstream oss;
+        oss << "{"
+            << "\"classVec\":{ \"point\": ["
+            << rotatedRec.leftTopx << "," << rotatedRec.leftTopy << "," << rotatedRec.rightTopx << "," << rotatedRec.rightTopy << ","
+            << rotatedRec.rightBottomx << "," << rotatedRec.rightBottomy << "," << rotatedRec.leftBottomx << "," << rotatedRec.leftBottomy << "],"
+            << "\"classId\": " << classId << ","
+            << "\"className\": \"" << className << "\","
+            << "\"confidence\": " << confidence
+            << " }}";
+
+        return oss.str();
+    }
 };
 
 class YOLOV11Obb : public BaseModel<ObbResult>
@@ -29,7 +47,6 @@ public:
 private:
     std::tuple<std::unique_ptr<float[]>, size_t> PreProcess(const cv::Mat &img) override;
     std::vector<ObbResult> PostProcess(const cv::Mat &img, std::vector<float> &modelOutput) override;
-    double CalculateFireArea(const cv::Mat &img, const ObbResult det);
 
     std::vector<std::string> labels_;
     float confThreshold_;

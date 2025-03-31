@@ -73,7 +73,12 @@ void singlePicture3(std::string imagePath)
 
     cv::Mat mat = cv::imdecode(imageContent, cv::IMREAD_COLOR);
     auto result = det.Predict(mat);
-    // det.visualizeRsult(mat, result);
+    det.visualizeRsult(mat, result);
+
+//     for(auto &elem:result)
+//     {
+//         std::cout << elem.toJson() << std::endl;
+//     }
 }
 
 int main(int argc, char**argv)

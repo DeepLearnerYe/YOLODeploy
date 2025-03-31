@@ -3,9 +3,6 @@
 #include <numeric>
 #include "yolov11_cls.hpp"
 
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <chrono>
 
 YOLOV11Cls::YOLOV11Cls(std::unique_ptr<IInferBackend> backend, float confThreshold, float nmsThresold)
     : BaseModel(std::move(backend)), confThreshold_(confThreshold), nmsThreshold_(nmsThresold)
@@ -87,6 +84,7 @@ std::vector<CLSResult> YOLOV11Cls::PostProcess(const cv::Mat &img, std::vector<f
     auto res = Softmax(modelOutput);
     auto topk_idx = TopK(res, 1);
 
+    // transform to the specific format
     CLSResult result;
     result.classId = topk_idx[0];
     result.confidence = res[topk_idx[0]];

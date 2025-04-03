@@ -144,9 +144,9 @@ JNIEXPORT jbyteArray JNICALL Java_ModelProcessor_detectionInfer(JNIEnv *env, job
             env->ReleaseByteArrayElements(imageData, data, JNI_ABORT);
             return 0; // Return null if image decoding fails
         }
-        
         auto objectVec = model->Predict(mat);
-        // model->visualizeRsult(mat, objectVec);
+        model->visualizeRsult(mat, objectVec);
+        
 
         // Convert results to string
         std::string message;
@@ -221,9 +221,34 @@ JNIEXPORT void JNICALL Java_ModelProcessor_destroyClassificationHandler(JNIEnv *
     delete model;
 }
 
-JNIEXPORT jbyteArray JNICALL Java_ModelProcessor_classificationInfer(JNIEnv *env, jobject, jlong handlerPtr, jbyteArray imageData)
+JNIEXPORT jbyteArray JNICALL Java_ModelProcessor_classificationInfer(JNIEnv *env, jobject, jlong handlerPtr, jbyteArray imageData, jintArray boxesArray)
 {
     std::ostringstream oss;
+    // Get the boxes
+    jsize boxSize = env->GetArrayLength(boxesArray);
+    if(boxSize % 4 != 0)
+    {
+        oss.str("");
+        oss.clear();
+        oss << "{ \"msg\": \"boxes length invalid\", " << "\"objectVec\": [], \"success\": false }";
+        std::string resultStr = oss.str();
+        jbyteArray result = env->NewByteArray(resultStr.size());
+        env->SetByteArrayRegion(result, 0, resultStr.size(), reinterpret_cast<const jbyte *>(resultStr.c_str()));
+        return result;
+    }
+    jint *boxes = env->GetIntArrayElements(boxesArray, nullptr);
+    std::vector<cv::Rect> roiBoxes;
+    std::vector<cv::Rect> reservedBoxes;
+    for (int i = 0; i < boxSize; i += 4) {
+        int x = boxes[i];
+        int y = boxes[i + 1];
+        int w = boxes[i + 2] - boxes[i];
+        int h = boxes[i + 3] - boxes[i + 1];
+        roiBoxes.emplace_back(x, y, w, h);
+        // std::cout << "Box " << (i / 4) << ": (" << x << ", " << y << ", " << w << ", " << h << ")" << std::endl;
+    }
+    env->ReleaseIntArrayElements(boxesArray, boxes, JNI_ABORT);
+
     // Get the input byte array
     jsize length = env->GetArrayLength(imageData);
     jbyte *data = env->GetByteArrayElements(imageData, nullptr);
@@ -243,19 +268,35 @@ JNIEXPORT jbyteArray JNICALL Java_ModelProcessor_classificationInfer(JNIEnv *env
             env->ReleaseByteArrayElements(imageData, data, JNI_ABORT);
             return 0; // Return null if image decoding fails
         }
-        
-        auto objectVec = model->Predict(mat);
-        // model->visualizeRsult(mat, objectVec);
+
+        for (auto &roi:roiBoxes)
+        {
+            cv::Mat cropped = mat(roi).clone();
+            auto objectVec = model->Predict(cropped);
+            model->visualizeRsult(cropped, objectVec);
+            if(objectVec[0].className == "person")
+            {
+                reservedBoxes.push_back(roi);
+            }
+        }
 
         // Convert results to string
         oss << "{\"msg\": \"classification done\", ";
         oss << "\"objectVec\": [";
-        for (size_t i = 0; i < objectVec.size(); ++i)
+        for (size_t i = 0; i < reservedBoxes.size(); ++i)
         {
-            oss << objectVec[i].toJson();
-            if (i != objectVec.size() - 1)
+            oss << "{\"classVec\":{"
+                << "\"x0\": " << reservedBoxes[i].x 
+                << ", \"y0\": " << reservedBoxes[i].y
+                << ", \"x1\": " << reservedBoxes[i].x + reservedBoxes[i].width
+                << ", \"y1\": " << reservedBoxes[i].y + reservedBoxes[i].height;
+            if (i != reservedBoxes.size() - 1)
             {
-                oss << ", ";
+                oss << "}}, ";
+            }
+            if( i == reservedBoxes.size() - 1)
+            {
+                oss << "}}";
             }
         }
         oss << "], \"success\": true";

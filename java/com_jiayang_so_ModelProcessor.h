@@ -9,35 +9,83 @@ extern "C" {
 #endif
 /*
  * Class:     com_jiayang_so_ModelProcessor
- * Method:    createHandler
- * Signature: (Ljava/lang/String;J)J
- */
-JNIEXPORT jlong JNICALL Java_com_jiayang_so_ModelProcessor_createHandler
-  (JNIEnv *, jobject, jstring, jlong);
-
-/*
- * Class:     com_jiayang_so_ModelProcessor
- * Method:    destroyHandler
- * Signature: (J)V
- */
-JNIEXPORT void JNICALL Java_com_jiayang_so_ModelProcessor_destroyHandler
-  (JNIEnv *, jobject, jlong);
-
-/*
- * Class:     com_jiayang_so_ModelProcessor
- * Method:    infer
- * Signature: (J[B)[B
- */
-JNIEXPORT jbyteArray JNICALL Java_com_jiayang_so_ModelProcessor_infer
-  (JNIEnv *, jobject, jlong, jbyteArray);
-
-/*
- * Class:     com_jiayang_so_ModelProcessor
  * Method:    setLicense
  * Signature: (Ljava/lang/String;)Z
  */
 JNIEXPORT jboolean JNICALL Java_com_jiayang_so_ModelProcessor_setLicense
   (JNIEnv *, jobject, jstring);
+
+/*
+ * Class:     com_jiayang_so_ModelProcessor
+ * Method:    createDetectionHandler
+ * Signature: (Ljava/lang/String;J)J
+ */
+JNIEXPORT jlong JNICALL Java_com_jiayang_so_ModelProcessor_createDetectionHandler
+  (JNIEnv *, jobject, jstring, jlong);
+
+/*
+ * Class:     com_jiayang_so_ModelProcessor
+ * Method:    destroyDetectionHandler
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_com_jiayang_so_ModelProcessor_destroyDetectionHandler
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     com_jiayang_so_ModelProcessor
+ * Method:    detectionInfer
+ * Signature: (J[B)[B
+ */
+JNIEXPORT jbyteArray JNICALL Java_com_jiayang_so_ModelProcessor_detectionInfer
+  (JNIEnv *, jobject, jlong, jbyteArray);
+
+/*
+ * Class:     com_jiayang_so_ModelProcessor
+ * Method:    createClassificationHandler
+ * Signature: (Ljava/lang/String;J)J
+ */
+JNIEXPORT jlong JNICALL Java_com_jiayang_so_ModelProcessor_createClassificationHandler
+  (JNIEnv *, jobject, jstring, jlong);
+
+/*
+ * Class:     com_jiayang_so_ModelProcessor
+ * Method:    destroyClassificationHandler
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_com_jiayang_so_ModelProcessor_destroyClassificationHandler
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     com_jiayang_so_ModelProcessor
+ * Method:    classificationInfer
+ * Signature: (J[B[F)[B
+ */
+JNIEXPORT jbyteArray JNICALL Java_com_jiayang_so_ModelProcessor_classificationInfer
+  (JNIEnv *, jobject, jlong, jbyteArray, jintArray);
+
+/*
+ * Class:     com_jiayang_so_ModelProcessor
+ * Method:    createOrientedBoundingBoxHandler
+ * Signature: (Ljava/lang/String;J)J
+ */
+JNIEXPORT jlong JNICALL Java_com_jiayang_so_ModelProcessor_createOrientedBoundingBoxHandler
+  (JNIEnv *, jobject, jstring, jlong);
+
+/*
+ * Class:     com_jiayang_so_ModelProcessor
+ * Method:    destroyOrientedBoundingBoxHandler
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_com_jiayang_so_ModelProcessor_destroyOrientedBoundingBoxHandler
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     com_jiayang_so_ModelProcessor
+ * Method:    orientedBoundingBoxInfer
+ * Signature: (J[B)[B
+ */
+JNIEXPORT jbyteArray JNICALL Java_com_jiayang_so_ModelProcessor_orientedBoundingBoxInfer
+  (JNIEnv *, jobject, jlong, jbyteArray);
 
 #ifdef __cplusplus
 }

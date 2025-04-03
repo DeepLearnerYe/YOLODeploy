@@ -135,7 +135,7 @@ void YOLOV11Det::visualizeRsult(const cv::Mat& image, std::vector<DetectResult>&
         box.width = elem.x1 - elem.x0;
         box.height = elem.y1 - elem.y0;
         cv::rectangle(image, box, cv::Scalar(0, 255, 0), 2, 8);
-        std::string text = std::to_string(elem.classId) + ": " + elem.className;
+        std::string text = std::to_string(elem.confidence) + ": " + elem.className;
         cv::putText(image, text, cv::Point(elem.x0, elem.y0 - 20), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(0, 255, 0), 2);
     }
     cv::imwrite("detOutput.jpg", image);

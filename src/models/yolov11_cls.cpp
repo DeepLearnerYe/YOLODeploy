@@ -92,13 +92,14 @@ std::vector<CLSResult> YOLOV11Cls::PostProcess(const cv::Mat &img, std::vector<f
 
     return {result};
 }
-
+int count = 0;
 void YOLOV11Cls::visualizeRsult(const cv::Mat &image, std::vector<CLSResult> &results)
 {
     for (auto &elem : results)
     {
-        std::string text = std::to_string(elem.classId) + ": " + elem.className;
+        std::string text = std::to_string(elem.confidence) + ": " + elem.className;
         cv::putText(image, text, cv::Point(30, 20), cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(0, 255, 0), 2);
     }
-    cv::imwrite("clsOutput.jpg", image);
+    std::string name = "clsOutput" + std::to_string(count++) + ".jpg";
+    cv::imwrite(name, image);
 }

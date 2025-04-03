@@ -61,7 +61,7 @@ JNIEXPORT void JNICALL Java_ModelProcessor_destroyClassificationHandler
  * Signature: (J[B)[B
  */
 JNIEXPORT jbyteArray JNICALL Java_ModelProcessor_classificationInfer
-  (JNIEnv *, jobject, jlong, jbyteArray);
+  (JNIEnv *, jobject, jlong, jbyteArray, jintArray);
 
 /*
  * Class:     ModelProcessor

@@ -22,7 +22,7 @@ public class ModelProcessor {
     // classification
     private native long createClassificationHandler(String modelPath, long gpuNo);
     private native void destroyClassificationHandler(long handlerPtr);
-    private native byte[] classificationInfer(long handlerPtr, byte[] imageData);
+    private native byte[] classificationInfer(long handlerPtr, byte[] imageData, int[] boxes);
     // oriented bounding boxes
     private native long createOrientedBoundingBoxHandler(String modelPath, long gpuNo);
     private native void destroyOrientedBoundingBoxHandler(long handlerPtr);
@@ -63,8 +63,8 @@ public class ModelProcessor {
         byte[] resultBytes = detectionInfer(handlerPtr, imageData);
         return new String(resultBytes);
     }
-    public String inferClassification(byte[] imageData) {
-        byte[] resultBytes = classificationInfer(handlerPtr, imageData);
+    public String inferClassification(byte[] imageData, int[] boxes) {
+        byte[] resultBytes = classificationInfer(handlerPtr, imageData, boxes);
         return new String(resultBytes);
     }
     public String inferOrientedBoundingBox(byte[] imageData) {
@@ -84,7 +84,7 @@ public class ModelProcessor {
             //************** example for detection
             // String detModelPath = "/root/host_map/yolov11/lib_nvidia_ryxw.so.1.1.20250319";
             // processor.createDetection(detModelPath);
-            // byte[] imageData = processor.loadImage("/root/host_map/image/test.jpg");
+            // byte[] imageData = processor.loadImage("/root/host_map/image/ryxw/test4.jpg");
             // String result = processor.inferDetection(imageData);
             // System.out.println("Inference Result: " + result);
             // processor.closeDetection();
@@ -93,13 +93,19 @@ public class ModelProcessor {
             //************** example for classification
             // String clsModelPath = "/root/host_map/yolov11/lib_nvidia_person_cls.so.1.1.20250326";
             // processor.createClassification(clsModelPath);
-            // byte[] imageData2 = processor.loadImage("/root/host_map/image/person_cls/6.jpg");
-            // String result2 = processor.inferClassification(imageData2);
+            // byte[] imageData2 = processor.loadImage("/root/host_map/image/ryxw/test4.jpg");
+            // // x0, y0, x1, y1
+            // int[] boxes = { 
+            // };
+            // // int[] boxes = { 
+            // //     701, 506, 737, 563
+            // // };
+            // String result2 = processor.inferClassification(imageData2, boxes);
             // System.out.println("Inference Result: " + result2);
             // processor.closeClassification();
 
             //************** example for oriented bounding boxes
-            String obbModelPath = "/root/host_map/yolov11/lib_nvidia_jjd.so.1.1.20250328";
+            String obbModelPath = "/root/host_map/yolov11/lib_nvidia_jjd_obb.so.1.1.20250328";
             processor.createOrientedBoundingBox(obbModelPath);
             byte[] imageData2 = processor.loadImage("/root/host_map/image/obb/jjd4.jpg");
             String result2 = processor.inferOrientedBoundingBox(imageData2);

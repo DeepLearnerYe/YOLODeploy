@@ -10,6 +10,7 @@
 #include "yolov11_cls.hpp"
 #include "yolov11_obb.hpp"
 
+
 bool isLicensed = false;
 
 std::string calculateMD5(const std::string &machineId)

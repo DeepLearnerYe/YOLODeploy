@@ -6,6 +6,7 @@
 #include <opencv2/opencv.hpp>
 #include "backend.hpp"
 #include "types.hpp"
+#include "utils.hpp"
 
 template<typename ResultType>
 class BaseModel
@@ -21,7 +22,7 @@ protected:
     virtual std::vector<ResultType> PostProcess(const cv::Mat& img, std::vector<float>& modelOutput) = 0;
 
     std::unique_ptr<IInferBackend> backend_;
-    std::mutex mutex_;
+    // std::mutex mutex_;
 };
 
 #include "base_model.inl"

@@ -104,3 +104,23 @@ int Base64Decode(const std::string &encodedString, std::vector<unsigned char> &d
 
     return 0;
 }
+
+void TimerUtils::Start(const std::string& tag)
+{
+    timers_[tag] = std::chrono::high_resolution_clock::now();
+}
+
+void TimerUtils::Stop(const std::string& tag)
+{
+    auto it = timers_.find(tag);
+    if(it != timers_.end())
+    {
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration<double, std::milli>(end - it->second).count();
+        std::cout << "[Timer] " << tag << " cost: " << duration << " ms" << std::endl;
+        timers_.erase(it);
+    }else
+    {
+        std::cerr << "[Timer] tag not found: " << tag << std::endl;
+    }
+}

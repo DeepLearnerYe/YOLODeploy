@@ -9,6 +9,7 @@ import java.io.*;
 import java.nio.file.*;
 
 
+
 public class ModelProcessor {
     static {
         System.loadLibrary("modelprocessor"); // Load the native library
@@ -82,12 +83,15 @@ public class ModelProcessor {
                 return;
             }
             //************** example for detection
-            // String detModelPath = "/root/host_map/yolov11/lib_nvidia_ryxw.so.1.1.20250319";
-            // processor.createDetection(detModelPath);
-            // byte[] imageData = processor.loadImage("/root/host_map/image/ryxw/test4.jpg");
-            // String result = processor.inferDetection(imageData);
+            String detModelPath = "/root/host_map/yolov11/lib_nvidia_ywhy.so.1.1.20250416";
+            processor.createDetection(detModelPath);
+            byte[] imageData = processor.loadImage("/root/host_map/image//fire.jpg");
+            String result = processor.inferDetection(imageData);
             // System.out.println("Inference Result: " + result);
-            // processor.closeDetection();
+            result = processor.inferDetection(imageData);
+            result = processor.inferDetection(imageData);
+
+            processor.closeDetection();
 
 
             //************** example for classification
@@ -105,12 +109,12 @@ public class ModelProcessor {
             // processor.closeClassification();
 
             //************** example for oriented bounding boxes
-            String obbModelPath = "/root/host_map/yolov11/lib_nvidia_jjd_obb.so.1.1.20250328";
-            processor.createOrientedBoundingBox(obbModelPath);
-            byte[] imageData2 = processor.loadImage("/root/host_map/image/obb/jjd4.jpg");
-            String result2 = processor.inferOrientedBoundingBox(imageData2);
-            System.out.println("Inference Result: " + result2);
-            processor.closeOrientedBoundingBox();            
+            // String obbModelPath = "/root/host_map/yolov11/lib_nvidia_jjd_obb.so.1.1.20250328";
+            // processor.createOrientedBoundingBox(obbModelPath);
+            // byte[] imageData2 = processor.loadImage("/root/host_map/image/obb/jjd4.jpg");
+            // String result2 = processor.inferOrientedBoundingBox(imageData2);
+            // System.out.println("Inference Result: " + result2);
+            // processor.closeOrientedBoundingBox();            
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -5,6 +5,7 @@
 #ifndef _Included_com_jiayang_so_ModelProcessor
 #define _Included_com_jiayang_so_ModelProcessor
 #ifdef __cplusplus
+
 extern "C" {
 #endif
 /*

@@ -1,0 +1,7 @@
+.vscode/
+*.jpg
+*.text
+build/
+java/lib
+java/*.jpg
+java/*.so

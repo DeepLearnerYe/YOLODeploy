@@ -5,6 +5,7 @@
 #ifndef _Included_ModelProcessor
 #define _Included_ModelProcessor
 #ifdef __cplusplus
+
 extern "C" {
 #endif
 /*

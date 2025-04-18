@@ -133,11 +133,11 @@ int TensorRTBackend::Initialize()
     cudaMalloc(&deviceBuffers_[1], modelLoadOpt_.batch * outputSize_ * sizeof(float));
     hostBuffer_ = new float[modelLoadOpt_.batch * outputSize_];
     output_.reserve(modelLoadOpt_.batch * outputSize_);
-    if (inputTensorName_ && outputTensorName_)
-    {
-        context_->setTensorAddress(inputTensorName_, deviceBuffers_[0]);
-        context_->setTensorAddress(outputTensorName_, deviceBuffers_[1]);
-    }
+    // if (inputTensorName_ && outputTensorName_)
+    // {
+    //     context_->setTensorAddress(inputTensorName_, deviceBuffers_[0]);
+    //     context_->setTensorAddress(outputTensorName_, deviceBuffers_[1]);
+    // }
     delete[] serialized_engine;
     return 0;
 }
@@ -156,9 +156,9 @@ int TensorRTBackend::SetInput(void *data, size_t size)
 
 int TensorRTBackend::Infer()
 {
-    // auto status = context_->enqueueV2(deviceBuffers_, stream_, nullptr);
-    auto status = context_->enqueueV3(stream_);
-    cudaStreamSynchronize(stream_);
+    auto status = context_->enqueueV2(deviceBuffers_, stream_, nullptr);
+    // auto status = context_->enqueueV3(stream_);
+    // cudaStreamSynchronize(stream_);
     return status;
 }
 

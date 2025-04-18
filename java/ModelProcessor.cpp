@@ -9,6 +9,8 @@
 #include "yolov11_det.hpp"
 #include "yolov11_cls.hpp"
 #include "yolov11_obb.hpp"
+#include "utils.hpp"
+
 
 bool isLicensed = false;
 
@@ -126,17 +128,19 @@ JNIEXPORT jbyteArray JNICALL Java_ModelProcessor_detectionInfer(JNIEnv *env, job
 {
     std::ostringstream oss;
     // Get the input byte array
+    TimerUtils::Start("javaPassImage");
     jsize length = env->GetArrayLength(imageData);
     jbyte *data = env->GetByteArrayElements(imageData, nullptr);
+    
     try
     {
         if (!isLicensed || !handlerPtr)
         {
             return 0;
         }
-        YOLOV11Det *model = reinterpret_cast<YOLOV11Det *>(handlerPtr);
-
         std::vector<uchar> inputBuffer(data, data + length);
+        TimerUtils::Stop("javaPassImage");
+        TimerUtils::Start("decodeImage");
         cv::Mat mat = cv::imdecode(inputBuffer, cv::IMREAD_COLOR);
         if (mat.empty())
         {
@@ -144,10 +148,13 @@ JNIEXPORT jbyteArray JNICALL Java_ModelProcessor_detectionInfer(JNIEnv *env, job
             env->ReleaseByteArrayElements(imageData, data, JNI_ABORT);
             return 0; // Return null if image decoding fails
         }
-        auto objectVec = model->Predict(mat);
-        model->visualizeRsult(mat, objectVec);
-        
+        TimerUtils::Stop("decodeImage");
 
+        YOLOV11Det *model = reinterpret_cast<YOLOV11Det *>(handlerPtr);
+        auto objectVec = model->Predict(mat);
+        // model->visualizeRsult(mat, objectVec);
+        
+        TimerUtils::Start("resultPassJava");
         // Convert results to string
         std::string message;
         if (objectVec.empty())
@@ -187,6 +194,7 @@ JNIEXPORT jbyteArray JNICALL Java_ModelProcessor_detectionInfer(JNIEnv *env, job
     // Create a new byte array for the result
     jbyteArray result = env->NewByteArray(resultStr.size());
     env->SetByteArrayRegion(result, 0, resultStr.size(), reinterpret_cast<const jbyte *>(resultStr.c_str()));
+    TimerUtils::Stop("resultPassJava");
 
     return result;
 }

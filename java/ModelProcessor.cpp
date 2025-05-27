@@ -152,7 +152,7 @@ JNIEXPORT jbyteArray JNICALL Java_ModelProcessor_detectionInfer(JNIEnv *env, job
 
         YOLOV11Det *model = reinterpret_cast<YOLOV11Det *>(handlerPtr);
         auto objectVec = model->Predict(mat);
-        // model->visualizeRsult(mat, objectVec);
+        model->visualizeRsult(mat, objectVec);
         
         TimerUtils::Start("resultPassJava");
         // Convert results to string
@@ -253,7 +253,7 @@ JNIEXPORT jbyteArray JNICALL Java_ModelProcessor_classificationInfer(JNIEnv *env
         int w = boxes[i + 2] - boxes[i];
         int h = boxes[i + 3] - boxes[i + 1];
         roiBoxes.emplace_back(x, y, w, h);
-        // std::cout << "Box " << (i / 4) << ": (" << x << ", " << y << ", " << w << ", " << h << ")" << std::endl;
+        std::cout << "Box " << (i / 4) << ": (" << x << ", " << y << ", " << w << ", " << h << ")" << std::endl;
     }
     env->ReleaseIntArrayElements(boxesArray, boxes, JNI_ABORT);
 
@@ -277,6 +277,7 @@ JNIEXPORT jbyteArray JNICALL Java_ModelProcessor_classificationInfer(JNIEnv *env
             return 0; // Return null if image decoding fails
         }
 
+        
         for (auto &roi:roiBoxes)
         {
             cv::Mat cropped = mat(roi).clone();

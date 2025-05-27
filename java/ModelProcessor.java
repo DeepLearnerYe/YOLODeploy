@@ -1,4 +1,5 @@
 import java.awt.image.BufferedImage;
+import java.awt.Graphics2D;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -83,30 +84,32 @@ public class ModelProcessor {
                 return;
             }
             //************** example for detection
-            String detModelPath = "/root/host_map/yolov11/lib_nvidia_ywhy.so.1.1.20250416";
+            String detModelPath = "/root/host_map/yolov11/lib_nvidia_ryxw.so.1.1.20250416";
             processor.createDetection(detModelPath);
-            byte[] imageData = processor.loadImage("/root/host_map/image//fire.jpg");
+            byte[] imageData = processor.loadImage("/root/host_map/image/yingmai/1.jpg");
             String result = processor.inferDetection(imageData);
-            // System.out.println("Inference Result: " + result);
-            result = processor.inferDetection(imageData);
+            System.out.println("Inference Result: " + result);
             result = processor.inferDetection(imageData);
 
             processor.closeDetection();
 
 
             //************** example for classification
-            // String clsModelPath = "/root/host_map/yolov11/lib_nvidia_person_cls.so.1.1.20250326";
-            // processor.createClassification(clsModelPath);
-            // byte[] imageData2 = processor.loadImage("/root/host_map/image/ryxw/test4.jpg");
-            // // x0, y0, x1, y1
+            String clsModelPath = "/root/host_map/yolov11/lib_nvidia_person_cls.so.1.1.20250326";
+            processor.createClassification(clsModelPath);
+            byte[] imageData2 = processor.loadImage("/root/host_map/image/yingmai/1.jpg");
+            // x0, y0, x1, y1
             // int[] boxes = { 
             // };
-            // // int[] boxes = { 
-            // //     701, 506, 737, 563
-            // // };
-            // String result2 = processor.inferClassification(imageData2, boxes);
-            // System.out.println("Inference Result: " + result2);
-            // processor.closeClassification();
+            int[] boxes = { 
+                825, 569, 968, 819,
+                247, 451, 378, 850,
+                658, 514, 807, 849,
+                1490, 663, 1523, 709
+            };
+            String result2 = processor.inferClassification(imageData2, boxes);
+            System.out.println("Inference Result: " + result2);
+            processor.closeClassification();
 
             //************** example for oriented bounding boxes
             // String obbModelPath = "/root/host_map/yolov11/lib_nvidia_jjd_obb.so.1.1.20250328";
@@ -123,9 +126,16 @@ public class ModelProcessor {
     // Helper methods for loading and saving images
     public byte[] loadImage(String imagePath) throws IOException {
         Path path = Paths.get(imagePath);
-        BufferedImage image = ImageIO.read(Files.newInputStream(path));
+        BufferedImage originalImage = ImageIO.read(Files.newInputStream(path));
+        BufferedImage convertedImage = new BufferedImage(
+        originalImage.getWidth(),
+        originalImage.getHeight(),
+        BufferedImage.TYPE_3BYTE_BGR);
+        Graphics2D g = convertedImage.createGraphics();
+        g.drawImage(originalImage, 0, 0, null);
+        g.dispose();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(image, "jpg", baos);
+        ImageIO.write(convertedImage, "jpg", baos);
         baos.flush();
         return baos.toByteArray();
     }
